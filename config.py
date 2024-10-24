@@ -1,6 +1,6 @@
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "Nazmul@321",
+    "password": "root@123",
     "database": "ETextBook",
 }

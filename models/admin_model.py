@@ -7,9 +7,9 @@ class AdminModel:
     def get_user(self, userID, password):
         query = "SELECT * FROM users WHERE userID = %s AND password = %s"
         cursor = self.db.execute_query(query, (userID, password))
-        return cursor.fetchone()
-
+        user = cursor.fetchone()
+        return user
     def get_all_users(self):
-        query = "SELECT id, username FROM users"
-        cursor = self.db.execute_query(query)
-        return cursor.fetchall()
+        query = "SELECT * FROM users"
+        users = self.db.fetch_results(query=query)
+        return users

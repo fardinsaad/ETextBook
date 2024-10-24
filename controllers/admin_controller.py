@@ -7,6 +7,19 @@ class AdminController:
         self.admin_model = AdminModel()
         self.admin_view = AdminView()
         self.user_view = UserView()
+        self.admin = None
+
+    def landingPage(self):
+        self.admin_view.navbar_menu(self.admin)
+        self.admin_view.landing_page_menu()
+        choice = self.admin_view.get_text_input("Enter Choice (1-6)")
+        if choice == '1': # Create a faculty account
+            pass
+        elif choice == '6':
+            print("\nYou are logged out.")
+            pass
+        else:
+            self.admin_view.display_message("Invalid choice!")
 
     def login(self):
         self.admin_view.display_message("\n\nAdmin | Login")
@@ -15,11 +28,10 @@ class AdminController:
         self.admin_view.display_menu()
         choice = self.admin_view.get_text_input("Enter Choice (1-2)")
         if choice == '1':
-            user = True#self.admin_model.get_user(userID, password)
+            user = self.admin_model.get_user(userID, password)
+            self.admin = user
             if user:
-                self.admin_view.display_message(f"Welcome, {userID}!")
-                #need to route admin landing page
-                exit()
+                self.landingPage()
             else:
                 self.admin_view.display_message("Login incorrect.")
                 self.login()
@@ -27,9 +39,3 @@ class AdminController:
             pass
         else:
             self.admin_view.display_message("Invalid choice!")
-
-        
-
-    # def view_all_users(self):
-    #     users = self.user_model.get_all_users()
-    #     self.user_view.display_users(users)
