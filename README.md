@@ -6,6 +6,17 @@ Installation Process
 
 1.  install mysql community server: https://dev.mysql.com/downloads/mysql/
 2.  install mysql workbench: https://dev.mysql.com/downloads/workbench/
-3.  setup virtual env for python and install mysql-connector-python3 and run the following command:
-    run `bash vir_env.sh`
-4.  run `python3 app.py`
+3.  setup virtual env for python:
+
+    ```For Linux/MAC run``` 
+    ```bash
+    bash vir_env.sh 
+    ```
+    ```For Windows run```
+    ```bash
+    vir_env.bat 
+    ```
+4.  run the code:
+    ```python
+    python3 app.py
+    ```

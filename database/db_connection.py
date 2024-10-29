@@ -58,3 +58,4 @@ class Database:
             self.connection.close()
             print("Database connection closed.")
 
+
