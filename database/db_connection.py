@@ -57,3 +57,4 @@ class Database:
         if self.connection.is_connected():
             self.connection.close()
             print("Database connection closed.")
+

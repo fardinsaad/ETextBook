@@ -7,7 +7,7 @@ CREATE TABLE ETextBook.User (
     email VARCHAR(50),
     password VARCHAR(20),
     role TEXT CHECK (role IN ('Admin', 'TA', 'Faculty', 'Student')),
-    account_creation_date DATE DEFAULT '0000-00-00 00:00:00'
+    account_creation_date DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 
