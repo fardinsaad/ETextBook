@@ -1,3 +1,4 @@
+import re
 from models.admin_model import AdminModel
 from views.admin_view import AdminView
 from views.user_view import UserView
@@ -8,19 +9,31 @@ class AdminController:
         self.admin_view = AdminView()
         self.user_view = UserView()
         self.admin = None
-
+    
+    def is_valid_email(email):
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'  
+        if re.match(email_regex, email):
+            return True
+        else:
+            return False
+    
+    def isValid(self, firstName, lastName, email, password):
+        return len(firstName)>1 and len(lastName) and self.is_valid_email(email) and len(password)>0
     def create_faculty_acount(self):
         self.admin_view.navbar_menu(self.admin, "Create a Faculty Account")
-        self.admin_view.get_text_input("A. First Name: ")
-        self.admin_view.get_text_input("B. Last Name: ")
-        self.admin_view.get_text_input("C. E-mail: ")
-        self.admin_view.get_text_input("D. Password: ")
+        firstName = self.admin_view.get_text_input("A. First Name: ")
+        lastName = self.admin_view.get_text_input("B. Last Name: ")
+        email = self.admin_view.get_text_input("C. E-mail: ")
+        password = self.admin_view.get_password_input("D. Password: ")
 
         self.admin_view.display_message("1. Add User")
         self.admin_view.display_message("2. Go Back")
         choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
         if choice == '1':
-            
+            if(self.isValid(firstName, lastName, email, password)):
+                self.admin_model.addFaculty(firstName, lastName, email, password)
+            else:
+                self.admin_view.display_message("Invalid input!!!")
             self.landing_page()
         elif choice == '2':
             self.landing_page()
