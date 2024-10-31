@@ -76,20 +76,19 @@ class AdminController:
         self.admin_view.display_message("1. Add")
         self.admin_view.display_message("2. Go Back")
         self.admin_view.display_message("3. Landing Page")
-        while True:
-            choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
-            if choice == '1':
-                decide = self.book_model.addContentBlock(blockID, type, text)
-                if decide == 0:
-                    self.create_text(type, blockID)
-                else:
-                    self.create_content_block()
-            elif choice == '2':
-                self.create_content_block()
-            elif choice == '3':
-                self.landing_page()
+        choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+        if choice == '1':
+            decide = self.book_model.addContentBlock(blockID, type, text)
+            if decide == 0:
+                self.create_text(type, blockID)
             else:
-                self.admin_view.display_message("Invalid choice!")
+                self.create_content_block()
+        elif choice == '2':
+            self.create_content_block()
+        elif choice == '3':
+            self.landing_page()
+        else:
+            self.admin_view.display_message("Invalid choice!")
                 
 
     
@@ -99,20 +98,19 @@ class AdminController:
         self.admin_view.display_message("1. Add")
         self.admin_view.display_message("2. Go Back")
         self.admin_view.display_message("3. Landing Page")
-        while True:
-            choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
-            if choice == '1':
-                decide = self.book_model.addContentBlock(blockID, type, picture)
-                if decide == 0:
-                    self.create_picture(type, blockID)
-                else:
-                    self.create_content_block()
-            elif choice == '2':
-                self.create_content_block()
-            elif choice == '3':
-                self.landing_page()
+        choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+        if choice == '1':
+            decide = self.book_model.addContentBlock(blockID, type, picture)
+            if decide == 0:
+                self.create_picture(type, blockID)
             else:
-                self.admin_view.display_message("Invalid choice!")   
+                self.create_content_block()
+        elif choice == '2':
+            self.create_content_block()
+        elif choice == '3':
+            self.landing_page()
+        else:
+            self.admin_view.display_message("Invalid choice!")   
                 
     def create_question(self, type, activityID):
         self.admin_view.navbar_menu(self.admin, "Add Question")
@@ -125,17 +123,16 @@ class AdminController:
             self.admin_view.display_message("1. Add Question")
             self.admin_view.display_message("2. Go back")
             self.admin_view.display_message("3. Landing Page")
-            while True:
-                choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
-                if choice == '1':
-                    decide = self.book_model.addContentBlock(blockID, type, activityID)
-                    self.create_question("question", activityID)
-                elif choice == '2':
-                    self.create_content_block()
-                elif choice == '3':
-                    self.landing_page()
-                else:
-                    self.admin_view.display_message("Invalid choice!")
+            choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+            if choice == '1':
+                decide = self.book_model.addContentBlock(blockID, type, activityID)
+                self.create_question("question", activityID)
+            elif choice == '2':
+                self.create_content_block()
+            elif choice == '3':
+                self.landing_page()
+            else:
+                self.admin_view.display_message("Invalid choice!")
         else:
             self.admin_view.display_message("Invalid Activity ID format")
             self.create_activity(type, blockID)
@@ -150,20 +147,19 @@ class AdminController:
             self.admin_view.display_message("3. Add Activity")
             self.admin_view.display_message("4. Go Back")
             self.admin_view.display_message("5. Landing Page")
-            while True:
-                choice = self.admin_view.get_text_input("Enter Choice (1-5): ")
-                if choice == '1':
-                    self.create_text("text", contentblockID)
-                elif choice == '2':
-                    self.create_picture("picture", contentblockID)
-                elif choice == '3':
-                    self.create_activity("activity", contentblockID)
-                elif choice == '4':
-                    self.create_section()
-                elif choice == '5':
-                    self.landing_page()
-                else:
-                    self.admin_view.display_message("Invalid choice!")
+            choice = self.admin_view.get_text_input("Enter Choice (1-5): ")
+            if choice == '1':
+                self.create_text("text", contentblockID)
+            elif choice == '2':
+                self.create_picture("picture", contentblockID)
+            elif choice == '3':
+                self.create_activity("activity", contentblockID)
+            elif choice == '4':
+                self.create_section()
+            elif choice == '5':
+                self.landing_page()
+            else:
+                self.admin_view.display_message("Invalid choice!")
         else:
             self.admin_view.display_message("Invalid Content Block ID format")
             self.create_content_block()
@@ -190,19 +186,15 @@ class AdminController:
                 self.admin_view.display_message("1. Add New Content Block")
                 self.admin_view.display_message("2. Go Back")
                 self.admin_view.display_message("3. Landing Page")
-                while True:
-                    choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
-                    if choice == '1':
-                        self.create_content_block()
-                        break
-                    elif choice == '2':
-                        self.create_chapter()
-                        break
-                    elif choice == '3':
-                        self.landing_page()
-                        break
-                    else:
-                        self.admin_view.display_message("Invalid choice!") 
+                choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+                if choice == '1':
+                    self.create_content_block()
+                elif choice == '2':
+                    self.create_chapter()
+                elif choice == '3':
+                    self.landing_page()
+                else:
+                    self.admin_view.display_message("Invalid choice!") 
         else:
             self.admin_view.display_message("Invalid Section ID format")
             self.create_section()
@@ -223,19 +215,15 @@ class AdminController:
                 self.admin_view.display_message("1. Add New Section")
                 self.admin_view.display_message("2. Go Back")
                 self.admin_view.display_message("3. Landing Page")
-                while True:
-                    choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
-                    if choice == '1':
-                        self.create_section()
-                        break
-                    elif choice == '2':
-                        self.create_etextbook()
-                        break
-                    elif choice == '3':
-                        self.landing_page()
-                        break
-                    else:
-                        self.admin_view.display_message("Invalid choice!")
+                choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+                if choice == '1':
+                    self.create_section()
+                elif choice == '2':
+                    self.create_etextbook()
+                elif choice == '3':
+                    self.landing_page()
+                else:
+                    self.admin_view.display_message("Invalid choice!")
         else:
             self.admin_view.display_message("Invalid Chapter ID format")
             self.create_chapter()        
@@ -252,16 +240,13 @@ class AdminController:
             print("\n")
             self.admin_view.display_message("1. Add New Chapter")
             self.admin_view.display_message("2. Go Back")
-            while True:
-                choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
-                if choice == '1':
-                    self.create_chapter()
-                    break
-                elif choice == '2':
-                    self.landing_page()
-                    break
-                else:
-                    self.admin_view.display_message("Invalid choice!")
+            choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
+            if choice == '1':
+                self.create_chapter()
+            elif choice == '2':
+                self.landing_page()
+            else:
+                self.admin_view.display_message("Invalid choice!")
 
 
 
@@ -275,9 +260,9 @@ class AdminController:
             self.create_etextbook()
         elif choice == '6':
             print("\nYou are logged out.")
-            pass
         else:
             self.admin_view.display_message("Invalid choice!")
+            self.landing_page()
 
     def login(self):
         self.admin_view.display_message("\n\nAdmin | Login")
