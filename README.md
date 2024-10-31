@@ -6,17 +6,22 @@ Installation Process
 
 1.  install mysql community server: https://dev.mysql.com/downloads/mysql/
 2.  install mysql workbench: https://dev.mysql.com/downloads/workbench/
-3.  setup virtual environment for python:
+3.  install `pip install python-dotenv`
+4.  setup virtual environment for python:
 
-    ```For Linux/MAC run``` 
+    `For Linux/MAC run`
+
     ```bash
-    bash vir_env.sh 
+    bash vir_env.sh
     ```
-    ```For Windows run```
+
+    `For Windows run`
+
     ```bash
-    vir_env.bat 
+    vir_env.bat
     ```
-4.  run the code:
+
+5.  run the code:
     ```python
     python3 app.py
     ```
