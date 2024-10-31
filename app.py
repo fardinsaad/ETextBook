@@ -1,5 +1,6 @@
 from controllers.user_controller import UserController
 from controllers.admin_controller import AdminController
+from controllers.faculty_controller import FacultyController
 
 class App:
     def __init__(self):

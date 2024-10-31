@@ -13,6 +13,12 @@ class UserView:
         return input(prompt)
 
     @staticmethod
+    def get_user_signInMenu(prompt):
+        print("\n1. Sign In")
+        print("2. Go Back") 
+
+
+    @staticmethod
     def get_password_input(prompt):
         import getpass
         return getpass.getpass(prompt)
