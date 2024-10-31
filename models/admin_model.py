@@ -23,7 +23,8 @@ class AdminModel:
             print("Faculty with userId: ", userID, " is created!!")
             return cursor
         except Exception as e:
-            print(f"Faculty account not created. Try again!.")        
+            print(f"Faculty account not created. Try again!.")  
+
 
     def add(self, user):
         query = "INSERT INTO User VALUES(1, 'FAUL','PAGOL','CHAGOL')"
