@@ -53,6 +53,14 @@ CREATE TABLE ETextBook.Chapter(
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- NOT DONE
+CREATE TABLE ETextBook.ETbookChapter (
+    textBookID INT,
+    chapterID VARCHAR(20),
+    PRIMARY KEY (textBookID, chapterID),
+    FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 -- Done
 CREATE TABLE ETextBook.Section (
@@ -65,6 +73,15 @@ CREATE TABLE ETextBook.Section (
     userID VARCHAR(20) NOT NULL,
     UNIQUE(chapterID, title)
     PRIMARY KEY (sectionID, chapterID, textBookID)
+);
+
+-- NOT DONE
+CREATE TABLE ETextBook.ChapterSection (
+    chapterID VARCHAR(20),
+    sectionID VARCHAR(20),
+    PRIMARY KEY (chapterID, sectionID),
+    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- DONE
@@ -81,6 +98,15 @@ CREATE TABLE ETextBook.ContentBlock (
     FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+);
+
+-- NOT DONE
+CREATE TABLE ETextBook.SectionContentBlock (
+    sectionID VARCHAR(20),
+    blockID VARCHAR(20),
+    PRIMARY KEY (sectionID, blockID),
+    FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CREATE TRIGGER ETextBook.Activity() insert after create content block
@@ -124,6 +150,15 @@ CREATE TABLE ETextBook.Question(
 );
 
 -- CREATE TRIGGER ETextBook.Question() insert after QUESTION
+
+-- NOT DONE
+CREATE TABLE ETextBook.ContentBlockActivity (
+    blockID VARCHAR(20),
+    activityID VARCHAR(20),
+    PRIMARY KEY (blockID, activityID),
+    FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (activityID) REFERENCES Activity(activityID) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 CREATE TABLE ETextBook.EnrollmentWaitlist (
     UToken INT,
