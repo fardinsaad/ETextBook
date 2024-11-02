@@ -36,7 +36,8 @@ CREATE TABLE ETextBook.Student(
 -- DONE
 CREATE TABLE ETextBook.ETbook(
     textBookID INT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL
+    title VARCHAR(255) NOT NULL,
+    userID VARCHAR(20) NOT NULL
 );
 
 -- Done
@@ -46,6 +47,7 @@ CREATE TABLE ETextBook.Chapter(
     title VARCHAR(255) NOT NULL,
     -- secondaryChapterNumber INT,
     textBookID INT,
+    userID VARCHAR(20) NOT NULL,
     UNIQUE(title, textBookID),
     PRIMARY KEY (chapterID, textBookID),
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE
@@ -68,8 +70,9 @@ CREATE TABLE ETextBook.Section (
     -- secondarySectionNumber VARCHAR(20)
     chapterID VARCHAR(20),
     textBookID INT,
+    userID VARCHAR(20) NOT NULL,
     UNIQUE(chapterID, title)
-    PRIMARY KEY (sectionID, chapterID, textBookID),
+    PRIMARY KEY (sectionID, chapterID, textBookID)
 );
 
 -- NOT DONE
@@ -89,6 +92,7 @@ CREATE TABLE ETextBook.ContentBlock (
     sectionID VARCHAR(20),
     chapterID VARCHAR(20),
     textBookID INT,
+    userID VARCHAR(20) NOT NULL,
     UNIQUE (sectionID, blockID)
     PRIMARY KEY (sectionID, chapterID, textBookID, blockID),
     FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -113,6 +117,7 @@ CREATE TABLE ETextBook.Activity (
     sectionID VARCHAR(20),
     chapterID VARCHAR(20),
     textBookID INT,
+    userID VARCHAR(20) NOT NULL,
     PRIMARY KEY (activityID, blockID, sectionID, chapterID, textBookID),
     FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -136,6 +141,7 @@ CREATE TABLE ETextBook.Question(
     OP4 TEXT,
     OP4_EXP TEXT,
     CORRECT_OP INT,
+    userID VARCHAR(20) NOT NULL,
     PRIMARY KEY (activityID, blockID, sectionID, chapterID, textBookID),
     FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -154,7 +160,7 @@ CREATE TABLE ETextBook.ContentBlockActivity (
     FOREIGN KEY (activityID) REFERENCES Activity(activityID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE EnrollmentWaitlist (
+CREATE TABLE ETextBook.EnrollmentWaitlist (
     UToken INT,
     studentID INT,
     PRIMARY KEY (UToken, studentID),
@@ -162,19 +168,8 @@ CREATE TABLE EnrollmentWaitlist (
     FOREIGN KEY (studentID) REFERENCES User(userID)
 );
 
-
-CREATE TABLE StudentActivity (
-    studentID INT,
-    activityID INT,
-    score INT DEFAULT 0,
-    timestamp TIMESTAMP NOT NULL,
-    PRIMARY KEY (studentID, activityID),
-    FOREIGN KEY (studentID) REFERENCES User(userID),
-    FOREIGN KEY (activityID) REFERENCES Activity(activityID)
-);
-
 -- DONE
-CREATE TABLE Course (
+CREATE TABLE ETextBook.Course (
     courseID VARCHAR(20) PRIMARY KEY,
     textBookID INT NOT NULL,
     title VARCHAR(255) NOT NULL,
@@ -187,7 +182,7 @@ CREATE TABLE Course (
 );
 
 -- DONE
-CREATE TABLE ActiveCourse (
+CREATE TABLE ETextBook.ActiveCourse (
     uToken CHAR(7) PRIMARY KEY,
     courseID VARCHAR(20) NOT NULL,
     coursecapacity INT NOT NULL,  
@@ -195,7 +190,7 @@ CREATE TABLE ActiveCourse (
 );
 
 -- DONE
-CREATE TABLE ActiveEnrollment (
+CREATE TABLE ETextBook.ActiveEnrollment (
     studentID VARCHAR(20),
     uToken CHAR(7),
     c_status VARCHAR(20) CHECK (c_status IN ('Enrolled', 'Pending')) NOT NULL,
@@ -203,8 +198,9 @@ CREATE TABLE ActiveEnrollment (
     FOREIGN KEY (studentID) REFERENCES User(userID),
     FOREIGN KEY (uToken) REFERENCES ActiveCourse(uToken)
 );
+
 -- DONE
-CREATE TABLE Notification (
+CREATE TABLE ETextBook.Notification (
     notificationID INT,
     userID VARCHAR(20) NOT NULL,
     n_message TEXT NOT NULL,
@@ -213,8 +209,8 @@ CREATE TABLE Notification (
     FOREIGN KEY (userID) REFERENCES User(userID),
 );
 
-
-CREATE TABLE ActiveCourseTA (
+-- DONE
+CREATE TABLE ETextBook.ActiveCourseTA (
     uToken CHAR(7),
     TAID VARCHAR(20),
     PRIMARY KEY (uToken, TAID),
@@ -222,7 +218,8 @@ CREATE TABLE ActiveCourseTA (
     FOREIGN KEY (TAID) REFERENCES TA(TAID)
 );
 
-CREATE TABLE content_user (
+-- DONE
+CREATE TABLE ETextBook.content_user_activity (
     userID VARCHAR(20),
     courseID VARCHAR(20),
     textBookID INT,
@@ -257,14 +254,25 @@ CREATE TABLE content_user (
 --     FOREIGN KEY (courseID) REFERENCES Course(courseID) ON DELETE CASCADE ON UPDATE CASCADE
 -- );
 
-
-CREATE TABLE StudentCourseTotal (
-    studentID INT,
-    UToken INT,
-    totalScore INT DEFAULT 0,
-    PRIMARY KEY (studentID, UToken),
-    FOREIGN KEY (studentID) REFERENCES User(userID),
-    FOREIGN KEY (UToken) REFERENCES Course(courseID)
+-- Done
+CREATE TABLE ETextBook.StudentActivity (
+    studentID VARCHAR(20),
+    uToken VARCHAR(7),
+    chapterID VARCHAR(20),
+    sectionID VARCHAR(20),
+    blockID VARCHAR(20),
+    activityID VARCHAR(20),
+    questionID VARCHAR(20),
+    score INT DEFAULT 0,
+    time_stamp TIMESTAMP NOT NULL,
+    PRIMARY KEY (studentID, UToken, chapterID, sectionID, blockID, activityID, questionID),
+    FOREIGN KEY (studentID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (UToken) REFERENCES ActiveCourse(uToken) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (activityID) REFERENCES Activity(activityID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (questionID) REFERENCES Question(questionID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
