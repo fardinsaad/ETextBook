@@ -4,6 +4,16 @@ from mysql.connector import Error
 class BookModel:
     def __init__(self):
         self.db = Database()
+        
+    def getdata(self, query):
+        try:
+            cursor = self.db.execute_query(query)
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Failed to get E-textbook data: {e}")
+            return None
 
     def getETextBookById(self, ebook):
         textBookID, userID = ebook['textBookID'], ebook['userID']
@@ -16,6 +26,7 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get E-textbook with ID {textBookID}: {e}")
             return None
+        
     def addEtextbook(self, ebook):
         textBookID, title, userID = ebook['textBookID'], ebook['title'], ebook['userID']
         query = "INSERT INTO ETbook (textBookID, title, userID) VALUES (%s, %s, %s)"
@@ -99,6 +110,9 @@ class BookModel:
         except Exception as e:
             print(f"Failed to update Text block '{blockID}' with '{type}': {e}")
             return 0
+        
+    def update_modifiedContentBlock(self, ebook):
+        pass
     def addContentBlock(self, ebook):
         blockID, blockType, content, textBookID, chapterID, sectionID, userID = ebook['contentblockID'], ebook['blockType'], ebook['content'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']
         query = "INSERT INTO ContentBlock (blockID, blockType, content, textBookID, chapterID, sectionID, userID) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -206,3 +220,19 @@ class BookModel:
                 print("Transaction rolled back due to error:", e)
             return 0
     
+    def modifyContentTransaction(self, ebook, type):
+        try:
+            self.db.connection.start_transaction()
+            if(self.getETextBookById(ebook) is not None and self.getchapterByTextBookId_chapterID(ebook) is not None and self.getSectionByChapterID_SectionID(ebook) is not None and self.getContentBlock(ebook) is not None):
+                if type == "text" or type == "picture":
+                    self.updateContentBlock(ebook)
+                self.updateContentBlock(ebook)
+            else:
+                print("You can not modify the content block as it does not exist. You can add it.")
+            self.db.connection.commit()
+            return 1
+        except Error as e:
+            if self.db.connection.is_connected():
+                self.db.connection.rollback()
+                print("Transaction rolled back due to error:", e)
+            return 0

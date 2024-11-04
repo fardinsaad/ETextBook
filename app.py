@@ -11,20 +11,20 @@ class App:
 
     def check(self):
         ebook = {
-            'textBookID': 1,
-            'title': 'Mathematics',
+            'textBookID': 2,
+            'title': 'Database Management System',
             'userID': 1,
-            'chapterID': "chap02",
-            'chapterTitle': 'Faul',
+            'chapterID': "chap01",
+            'chapterTitle': 'Introduction',
             'sectionID': "Sec01",
-            'sectionTitle': 'intro',
+            'sectionTitle': 'RDBMS',
             'contentblockID': "Block01",
             'blockType': 'activity',
             'content': 'ACT01',
             'activityID': 'ACT01',
-            'questionID': 'Q03',
+            'questionID': 'Q1',
             'question': 'What is 2+2?',
-            'OP1': '1',
+            'OP1': '4',
             'OP1_EXP': 'EXP-1',
             'OP1_Label': 'Correct',
             'OP2': '2',
@@ -40,7 +40,7 @@ class App:
         self.book_model.addActivtyTransaction(ebook)
 
     def run(self):
-        self.check()
+        # self.check()
         while True:
             self.user_controller.user_view.display_menu()
             choice = self.user_controller.user_view.get_user_input("Enter choice (1-5): ")
