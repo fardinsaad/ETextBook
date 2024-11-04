@@ -11,6 +11,7 @@ class AdminController:
         self.user_view = UserView()
         self.book_model = BookModel()
         self.admin = None
+        self.ebook = {}
     
     # def is_valid_email(email):
     #     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'  
@@ -70,17 +71,21 @@ class AdminController:
         else:
             self.admin_view.display_message("Invalid choice!")
             
-    def create_text(self, type, blockID):
+    def create_text(self, blockType):
         self.admin_view.navbar_menu(self.admin, "Add Text")
-        text = self.admin_view.get_text_input("Enter Text: ")
+        content = self.admin_view.get_text_input("Enter Text: ")
         self.admin_view.display_message("1. Add")
         self.admin_view.display_message("2. Go Back")
         self.admin_view.display_message("3. Landing Page")
         choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+        
         if choice == '1':
-            decide = self.book_model.addContentBlock(blockID, type, text)
-            if decide == 0:
-                self.create_text(type, blockID)
+            # values: textBookID, title, chapterID, chapterTitle, sectionID, sectionTitle, contentblockID, type, text
+            self.ebook['blockType'] = blockType
+            self.ebook['content'] = content
+            isSucceed = self.book_model.addContentTransaction(self.ebook)
+            if isSucceed == 0:
+                self.landing_page()
             else:
                 self.create_content_block()
         elif choice == '2':
@@ -90,19 +95,20 @@ class AdminController:
         else:
             self.admin_view.display_message("Invalid choice!")
                 
-
-    
-    def create_picture(self, type, blockID):
+    def create_picture(self, type):
         self.admin_view.navbar_menu(self.admin, "Add Picture")
-        picture = self.admin_view.get_text_input("Enter Picture: ")
+        content = self.admin_view.get_text_input("Enter Picture: ")
         self.admin_view.display_message("1. Add")
         self.admin_view.display_message("2. Go Back")
         self.admin_view.display_message("3. Landing Page")
         choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+        self.ebook['blockType'] = type
+        self.ebook['content'] = content
         if choice == '1':
-            decide = self.book_model.addContentBlock(blockID, type, picture)
-            if decide == 0:
-                self.create_picture(type, blockID)
+            # values: textBookID, title, chapterID, chapterTitle, sectionID, sectionTitle, contentblockID, type, text
+            isSucceed = self.book_model.addContentTransaction(self.ebook)
+            if isSucceed == 0:
+                self.landing_page()
             else:
                 self.create_content_block()
         elif choice == '2':
@@ -112,11 +118,51 @@ class AdminController:
         else:
             self.admin_view.display_message("Invalid choice!")   
                 
-    def create_question(self, type, activityID):
+    def create_question(self):
         self.admin_view.navbar_menu(self.admin, "Add Question")
         questionID = self.admin_view.get_text_input("A. Enter Question ID: ")
+        question = self.admin_view.get_text_input("B. Enter Question Text: ")
+        option1 = self.admin_view.get_text_input("C. Enter Option 1: ")
+        option1Explanation = self.admin_view.get_text_input("D. Enter Option 1 Explanation: ")
+        option1Label = self.admin_view.get_text_input("E. Enter Option 1 Label(Correct/Incorrect): ")
+        option2 = self.admin_view.get_text_input("F. Enter Option 2: ")
+        option2Explanation = self.admin_view.get_text_input("G. Enter Option 2 Explanation: ")
+        option2Label = self.admin_view.get_text_input("H. Enter Option 2 Label(Correct/Incorrect): ")
+        option3 = self.admin_view.get_text_input("I. Enter Option 3: ")
+        option3Explanation = self.admin_view.get_text_input("J. Enter Option 3 Explanation: ")
+        option3Label = self.admin_view.get_text_input("K. Enter Option 3 Label(Correct/Incorrect): ")
+        option4 = self.admin_view.get_text_input("L. Enter Option 4: ")
+        option4Explanation = self.admin_view.get_text_input("M. Enter Option 4 Explanation: ")
+        option4Label = self.admin_view.get_text_input("N. Enter Option 4 Label(Correct/Incorrect): ")
+
+        self.admin_view.display_message("1. Save")
+        self.admin_view.display_message("2. Cancel")
+        self.admin_view.display_message("3. Landing Page")
+        choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+        if choice == '1':
+            self.ebook['questionID'] = questionID
+            self.ebook['question'] = question
+            self.ebook['option1'] = option1
+            self.ebook['option1Explanation'] = option1Explanation
+            self.ebook['option1Label'] = option1Label
+            self.ebook['option2'] = option2
+            self.ebook['option2Explanation'] = option2Explanation
+            self.ebook['option2Label'] = option2Label
+            self.ebook['option3'] = option3
+            self.ebook['option3Explanation'] = option3Explanation
+            self.ebook['option3Label'] = option3Label
+            self.ebook['option4'] = option4
+            self.ebook['option4Explanation'] = option4Explanation
+            self.ebook['option4Label'] = option4Label
+            isSucceed = self.book_model.addActivtyTransaction(self.ebook)
+            if isSucceed == 0:
+                self.landing_page()
+            else:
+                print("\nQuestion was saved successfully!")
+                self.create_activity()
+
     
-    def create_activity(self, type, blockID):
+    def create_activity(self, type):
         self.admin_view.navbar_menu(self.admin, "Add Activity")
         activityID = self.admin_view.get_text_input("Enter Unique Activity ID: ")
         if (self.isValidActivityID(activityID)):
@@ -125,8 +171,10 @@ class AdminController:
             self.admin_view.display_message("3. Landing Page")
             choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
             if choice == '1':
-                decide = self.book_model.addContentBlock(blockID, type, activityID)
-                self.create_question("question", activityID)
+                self.ebook['blockType'] = type
+                self.ebook['activityID'] = activityID
+                self.ebook['content'] = activityID
+                self.create_question()
             elif choice == '2':
                 self.create_content_block()
             elif choice == '3':
@@ -135,9 +183,8 @@ class AdminController:
                 self.admin_view.display_message("Invalid choice!")
         else:
             self.admin_view.display_message("Invalid Activity ID format")
-            self.create_activity(type, blockID)
-        
-            
+            self.create_activity(type)
+              
     def create_content_block(self):
         self.admin_view.navbar_menu(self.admin, "Add New Content Block")
         contentblockID = self.admin_view.get_text_input("Enter Content Block ID: ")
@@ -148,12 +195,13 @@ class AdminController:
             self.admin_view.display_message("4. Go Back")
             self.admin_view.display_message("5. Landing Page")
             choice = self.admin_view.get_text_input("Enter Choice (1-5): ")
+            self.ebook['contentblockID'] = contentblockID
             if choice == '1':
-                self.create_text("text", contentblockID)
+                self.create_text("text")
             elif choice == '2':
-                self.create_picture("picture", contentblockID)
+                self.create_picture("picture")
             elif choice == '3':
-                self.create_activity("activity", contentblockID)
+                self.create_activity("activity")
             elif choice == '4':
                 self.create_section()
             elif choice == '5':
@@ -178,23 +226,22 @@ class AdminController:
 
             # Format back to two digits and combine with the prefix
             secondarySectionNumber = f"{prefix}{secondary_number:02d}"  # Ensures two-digit format
-            decide = self.book_model.addSection(sectionID, sectionTitle, primarySectionNumber, secondarySectionNumber)
-            if decide == 0:
-                self.create_section()
+            print("\n")
+            self.admin_view.display_message("1. Add New Content Block")
+            self.admin_view.display_message("2. Go Back")
+            self.admin_view.display_message("3. Landing Page")
+            choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+            if choice == '1':
+                self.ebook['sectionID'] = sectionID
+                self.ebook['sectionTitle'] = sectionTitle
+
+                self.create_content_block()
+            elif choice == '2':
+                self.create_chapter()
+            elif choice == '3':
+                self.landing_page()
             else:
-                print("\n")
-                self.admin_view.display_message("1. Add New Content Block")
-                self.admin_view.display_message("2. Go Back")
-                self.admin_view.display_message("3. Landing Page")
-                choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
-                if choice == '1':
-                    self.create_content_block()
-                elif choice == '2':
-                    self.create_chapter()
-                elif choice == '3':
-                    self.landing_page()
-                else:
-                    self.admin_view.display_message("Invalid choice!") 
+                self.admin_view.display_message("Invalid choice!") 
         else:
             self.admin_view.display_message("Invalid Section ID format")
             self.create_section()
@@ -206,24 +253,22 @@ class AdminController:
         if self.ischapterIDValid(chapterID):
             primarychapterID = self.extract_primary_chapter_id(chapterID)
             secondarychapterID = int(primarychapterID) - 1 
-            #print(chapterID, primarychapterID, chapterTitle, secondarychapterID)
-            decide = self.book_model.addChapter(chapterID, int(primarychapterID), chapterTitle, secondarychapterID)
-            if decide == 0:
-                self.create_chapter()
+            
+            self.admin_view.display_message("\n1. Add New Section")
+            self.admin_view.display_message("2. Go Back")
+            self.admin_view.display_message("3. Landing Page")
+            choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+            if choice == '1':
+                self.ebook['chapterID'] = chapterID
+                self.ebook['chapterTitle'] = chapterTitle
+                
+                self.create_section()
+            elif choice == '2':
+                self.create_etextbook()
+            elif choice == '3':
+                self.landing_page()
             else:
-                print("\n")
-                self.admin_view.display_message("1. Add New Section")
-                self.admin_view.display_message("2. Go Back")
-                self.admin_view.display_message("3. Landing Page")
-                choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
-                if choice == '1':
-                    self.create_section()
-                elif choice == '2':
-                    self.create_etextbook()
-                elif choice == '3':
-                    self.landing_page()
-                else:
-                    self.admin_view.display_message("Invalid choice!")
+                self.admin_view.display_message("Invalid choice!")
         else:
             self.admin_view.display_message("Invalid Chapter ID format")
             self.create_chapter()        
@@ -232,23 +277,18 @@ class AdminController:
         self.admin_view.navbar_menu(self.admin, "Create E-textbook")
         title = self.admin_view.get_text_input("Enter E-textbook Title: ")
         textBookID = self.admin_view.get_text_input("Enter Unique E-textbook ID: ")
-        # Add validity checks for textBookID ********
-        decide = self.book_model.addEtextbook(textBookID, title)
-        if decide == 0:
-            self.create_etextbook()
+
+        self.admin_view.display_message("1. Add New Chapter")
+        self.admin_view.display_message("2. Go Back")
+        choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
+        if choice == '1':
+            self.ebook['title'] = title
+            self.ebook['textBookID'] = textBookID
+            self.create_chapter()
+        elif choice == '2':
+            self.landing_page()
         else:
-            print("\n")
-            self.admin_view.display_message("1. Add New Chapter")
-            self.admin_view.display_message("2. Go Back")
-            choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
-            if choice == '1':
-                self.create_chapter()
-            elif choice == '2':
-                self.landing_page()
-            else:
-                self.admin_view.display_message("Invalid choice!")
-
-
+            self.admin_view.display_message("Invalid choice!")
 
     def landing_page(self):
         self.admin_view.navbar_menu(self.admin, "Landing Page")
@@ -272,6 +312,7 @@ class AdminController:
         choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
         if choice == '1':
             user = self.admin_model.get_user(userID, password)
+            self.ebook['userID'] = user[0]
             self.admin = user
             if user:
                 self.landing_page()

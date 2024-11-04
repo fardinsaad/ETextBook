@@ -55,7 +55,6 @@ CREATE TABLE ETextBook.Chapter(
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
 -- Done
 CREATE TABLE ETextBook.Section (
     sectionID VARCHAR(20),
@@ -63,41 +62,42 @@ CREATE TABLE ETextBook.Section (
     textBookID INT,
     chapterID VARCHAR(20),
     userID VARCHAR(20) NOT NULL,
-    UNIQUE(chapterID, title)
+    UNIQUE(textBookID, chapterID, title),
     PRIMARY KEY (sectionID, chapterID, textBookID),
+    FOREIGN KEY (chapterID, textBookID) REFERENCES ETextBook.Chapter(chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- DONE
 CREATE TABLE ETextBook.ContentBlock (
-    blockID VARCHAR(20) PRIMARY KEY,
+    blockID VARCHAR(20),
     blockType VARCHAR(255) CHECK (blockType IN ('text', 'picture', 'activity')),
-    content TEXT
+    content TEXT,
     textBookID INT,
     chapterID VARCHAR(20),
     sectionID VARCHAR(20),
     userID VARCHAR(20) NOT NULL,
-    UNIQUE (sectionID, blockID)
     PRIMARY KEY (sectionID, chapterID, textBookID, blockID),
-    FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID) REFERENCES ETextBook.Section(sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chapterID, textBookID) REFERENCES ETextBook.Chapter(chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CREATE TRIGGER ETextBook.Activity() insert after create content block
---DONE
+-- DONE
 CREATE TABLE ETextBook.Activity (
     activityID VARCHAR(20),
     textBookID INT,
     chapterID VARCHAR(20),
     sectionID VARCHAR(20),
-    blockID VARCHAR(20) PRIMARY KEY,
+    blockID VARCHAR(20),
     userID VARCHAR(20) NOT NULL,
     PRIMARY KEY (activityID, blockID, sectionID, chapterID, textBookID),
-    FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID, blockID) REFERENCES ETextBook.ContentBlock(sectionID, chapterID, textBookID, blockID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID) REFERENCES ETextBook.Section(sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chapterID, textBookID) REFERENCES ETextBook.Chapter(chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -107,49 +107,45 @@ CREATE TABLE ETextBook.Question(
     textBookID INT,
     chapterID VARCHAR(20),
     sectionID VARCHAR(20),
-    blockID VARCHAR(20) PRIMARY KEY,
+    blockID VARCHAR(20),
     activityID VARCHAR(20),
+    question TEXT,
     OP1 TEXT,
     OP1_EXP TEXT,
+    OP1_Label TEXT,
     OP2 TEXT,
     OP2_EXP TEXT,
+    OP2_Label TEXT,
     OP3 TEXT,
     OP3_EXP TEXT,
+    OP3_Label TEXT,
     OP4 TEXT,
     OP4_EXP TEXT,
-    CORRECT_OP INT,
+    OP4_Label TEXT,
     userID VARCHAR(20) NOT NULL,
-    PRIMARY KEY (activityID, blockID, sectionID, chapterID, textBookID),
-    FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (questionID, activityID, blockID, sectionID, chapterID, textBookID),
+    FOREIGN KEY (activityID, blockID, sectionID, chapterID, textBookID) REFERENCES ETextBook.Activity(activityID, blockID, sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID, blockID) REFERENCES ETextBook.ContentBlock(sectionID, chapterID, textBookID, blockID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID) REFERENCES ETextBook.Section(sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chapterID, textBookID) REFERENCES ETextBook.Chapter(chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CREATE TRIGGER ETextBook.Question() insert after QUESTION
 
-CREATE TABLE ETextBook.EnrollmentWaitlist (
-    UToken INT,
-    studentID INT,
-    PRIMARY KEY (UToken, studentID),
-    FOREIGN KEY (UToken) REFERENCES Course(courseID),
-    FOREIGN KEY (studentID) REFERENCES User(userID)
-);
-
 -- DONE
 CREATE TABLE ETextBook.Course (
     courseID VARCHAR(20) PRIMARY KEY,
     textBookID INT NOT NULL,
     title VARCHAR(255) NOT NULL,
-    userID INT NOT NULL,  
+    userID VARCHAR(20) NOT NULL,  
     startDate DATE NOT NULL,
     endDate DATE NOT NULL,
     courseType TEXT CHECK (courseType IN ('Active', 'Evaluation')), 
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
 -- DONE
 CREATE TABLE ETextBook.ActiveCourse (
     uToken CHAR(7) PRIMARY KEY,
@@ -157,6 +153,15 @@ CREATE TABLE ETextBook.ActiveCourse (
     coursecapacity INT NOT NULL,  
     FOREIGN KEY (courseID) REFERENCES Course(courseID) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE ETextBook.EnrollmentWaitlist (
+    uToken CHAR(7),
+    studentID VARCHAR(20),
+    PRIMARY KEY (uToken, studentID),
+    FOREIGN KEY (uToken) REFERENCES ActiveCourse(uToken),
+    FOREIGN KEY (studentID) REFERENCES User(userID)
+);
+
 
 -- DONE
 CREATE TABLE ETextBook.ActiveEnrollment (
@@ -175,7 +180,7 @@ CREATE TABLE ETextBook.Notification (
     n_message TEXT NOT NULL,
     isRead BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (notificationID),
-    FOREIGN KEY (userID) REFERENCES User(userID),
+    FOREIGN KEY (userID) REFERENCES User(userID)
 );
 
 -- DONE
@@ -197,21 +202,21 @@ CREATE TABLE ETextBook.content_user_activity (
     blockID VARCHAR(20),
     activityID VARCHAR(20),
     questionID VARCHAR(20),
-    isHidden_chap VARCHAR(20) CHECK (isHidden IN ('yes', 'no')) NOT NULL,
-    isHidden_sec VARCHAR(20) CHECK (isHidden IN ('yes', 'no')) NOT NULL,
-    isHidden_block VARCHAR(20) CHECK (isHidden IN ('yes', 'no')) NOT NULL,
-    isHidden_act VARCHAR(20) CHECK (isHidden IN ('yes', 'no')) NOT NULL,
-    isHidden_ques VARCHAR(20) CHECK (isHidden IN ('yes', 'no')) NOT NULL,
+    isHidden_chap VARCHAR(20) CHECK (isHidden_chap IN ('yes', 'no')) NOT NULL,
+    isHidden_sec VARCHAR(20) CHECK (isHidden_sec IN ('yes', 'no')) NOT NULL,
+    isHidden_block VARCHAR(20) CHECK (isHidden_block IN ('yes', 'no')) NOT NULL,
+    isHidden_act VARCHAR(20) CHECK (isHidden_act IN ('yes', 'no')) NOT NULL,
+    isHidden_ques VARCHAR(20) CHECK (isHidden_ques IN ('yes', 'no')) NOT NULL,
     PRIMARY KEY (userID, courseID, textBookID, chapterID, sectionID, blockID, activityID, questionID),
-    FOREIGN KEY (userID) REFERENCES User(userID),
     FOREIGN KEY (courseID) REFERENCES Course(courseID),
-    FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID),
-    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID),
-    FOREIGN KEY (sectionID) REFERENCES Section(sectionID),
-    FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID),
-    FOREIGN KEY (activityID) REFERENCES Activity(activityID),
-    FOREIGN KEY (questionID) REFERENCES Question(questionID)
-)
+    FOREIGN KEY (questionID, activityID, blockID, sectionID, chapterID, textBookID) REFERENCES ETextBook.Question(questionID, activityID, blockID, sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (activityID, blockID, sectionID, chapterID, textBookID) REFERENCES ETextBook.Activity(activityID, blockID, sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID, blockID) REFERENCES ETextBook.ContentBlock(sectionID, chapterID, textBookID, blockID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID) REFERENCES ETextBook.Section(sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chapterID, textBookID) REFERENCES ETextBook.Chapter(chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 -- maybe a procedure to update hidden status of content block
 
@@ -226,6 +231,7 @@ CREATE TABLE ETextBook.content_user_activity (
 -- Done
 CREATE TABLE ETextBook.StudentActivity (
     studentID VARCHAR(20),
+    textBookID INT,
     uToken VARCHAR(7),
     chapterID VARCHAR(20),
     sectionID VARCHAR(20),
@@ -237,11 +243,12 @@ CREATE TABLE ETextBook.StudentActivity (
     PRIMARY KEY (studentID, UToken, chapterID, sectionID, blockID, activityID, questionID),
     FOREIGN KEY (studentID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (UToken) REFERENCES ActiveCourse(uToken) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (chapterID) REFERENCES Chapter(chapterID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (sectionID) REFERENCES Section(sectionID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (blockID) REFERENCES ContentBlock(blockID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (activityID) REFERENCES Activity(activityID) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (questionID) REFERENCES Question(questionID) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (questionID, activityID, blockID, sectionID, chapterID, textBookID) REFERENCES ETextBook.Question(questionID, activityID, blockID, sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (activityID, blockID, sectionID, chapterID, textBookID) REFERENCES ETextBook.Activity(activityID, blockID, sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID, blockID) REFERENCES ETextBook.ContentBlock(sectionID, chapterID, textBookID, blockID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (sectionID, chapterID, textBookID) REFERENCES ETextBook.Section(sectionID, chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (chapterID, textBookID) REFERENCES ETextBook.Chapter(chapterID, textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 

@@ -14,7 +14,7 @@ class Database:
                 if cls._instance is None:
                     try:
                         cls._instance = super(Database, cls).__new__(cls)
-                        cls._instance.connection = mysql.connector.connect(**DB_CONFIG, autocommit=True)
+                        cls._instance.connection = mysql.connector.connect(**DB_CONFIG)
                         if cls._instance.connection.is_connected():
                             print("Connected to MySQL database")
                         else:
