@@ -5,7 +5,8 @@ class BookModel:
     def __init__(self):
         self.db = Database()
 
-    def getETextBookById(self, textBookID, userID):
+    def getETextBookById(self, ebook):
+        textBookID, userID = ebook['textBookID'], ebook['userID']
         query = "SELECT * FROM ETbook WHERE textBookID = %s and userID = %s"
         try:
             cursor = self.db.execute_query(query, (textBookID, userID,))
@@ -15,8 +16,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get E-textbook with ID {textBookID}: {e}")
             return None
-    def addEtextbook(self, textBookID, title, userID):
-        print(textBookID, title, userID)
+    def addEtextbook(self, ebook):
+        textBookID, title, userID = ebook['textBookID'], ebook['title'], ebook['userID']
         query = "INSERT INTO ETbook (textBookID, title, userID) VALUES (%s, %s, %s)"
         try:
             cursor = self.db.execute_query(query, (textBookID, title, userID))
@@ -28,7 +29,8 @@ class BookModel:
             print(f"Failed to create E-textbook '{title}': {e}") 
             return 0
 
-    def getchapterByTextBookId_chapterID(self, textBookID, chapterID, userID):
+    def getchapterByTextBookId_chapterID(self, ebook):
+        textBookID, chapterID, userID = ebook['textBookID'], ebook['chapterID'], ebook['userID']
         query = "SELECT * FROM Chapter WHERE textBookID = %s AND chapterID = %s and userID = %s"
         try:
             cursor = self.db.execute_query(query, (textBookID, chapterID, userID,))
@@ -38,7 +40,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get chapterID with textBookID {chapterID}, {textBookID}: {e}")
             return None
-    def addChapter(self, chapterID, chapterTitle, textBookID, userID):
+    def addChapter(self, ebook):
+        chapterID, chapterTitle, textBookID, userID = ebook['chapterID'], ebook['chapterTitle'], ebook['textBookID'], ebook['userID']
         query = "INSERT INTO Chapter (chapterID, title, textBookID, userID) VALUES (%s, %s, %s, %s)"
         try:
             cursor = self.db.execute_query(query, (chapterID, chapterTitle, textBookID, userID))
@@ -49,7 +52,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to create Chapter '{chapterTitle}': {e}")
             return 0  
-    def getSectionByChapterID_SectionID(self, textBookID, chapterID, sectionID, userID):
+    def getSectionByChapterID_SectionID(self, ebook):
+        textBookID, chapterID, sectionID, userID = ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']
         query = "SELECT * FROM Section WHERE textBookID=%s AND chapterID = %s AND sectionID = %s AND userID = %s"
         try:
             cursor = self.db.execute_query(query, (textBookID, chapterID, sectionID, userID,))
@@ -59,7 +63,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get Section with chapterID {chapterID}, sectionID {sectionID}: {e}")
             return None
-    def addSection(self, sectionID, title, textBookID, chapterID, userID):
+    def addSection(self, ebook):
+        sectionID, title, textBookID, chapterID, userID = ebook['sectionID'], ebook['sectionTitle'], ebook['textBookID'], ebook['chapterID'], ebook['userID']
         query = "INSERT INTO Section (sectionID, title, textBookID, chapterID, userID) VALUES (%s, %s, %s, %s, %s)"
         try:
             cursor = self.db.execute_query(query, (sectionID, title, textBookID, chapterID, userID))
@@ -71,7 +76,8 @@ class BookModel:
             print(f"Failed to create Section '{title}': {e}")
             return 0
         
-    def getContentBlock(self, blockID, blockType, textBookID, chapterID, sectionID, userID):
+    def getContentBlock(self, ebook):
+        blockID, blockType, textBookID, chapterID, sectionID, userID = ebook['contentblockID'], ebook['blockType'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']
         query = "SELECT * FROM ContentBlock WHERE blockID = %s AND blockType = %s AND textBookID = %s AND chapterID = %s AND sectionID = %s AND userID = %s"
         try:
             cursor = self.db.execute_query(query, (blockID, blockType, textBookID, chapterID, sectionID, userID,))
@@ -81,7 +87,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get Text block with ID {blockID}: {e}")
             return None
-    def updateContentBlock(self, blockID, blockType, content, textBookID, chapterID, sectionID, userID):
+    def updateContentBlock(self, ebook):
+        blockID, blockType, content, textBookID, chapterID, sectionID, userID = ebook['contentblockID'], ebook['blockType'], ebook['content'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']
         query = "UPDATE ContentBlock SET content = %s WHERE blockID = %s AND blockType = %s AND textBookID = %s AND chapterID = %s AND sectionID = %s AND userID = %s"
         try:
             cursor = self.db.execute_query(query, (content, blockID, blockType, textBookID, chapterID, sectionID, userID))
@@ -92,7 +99,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to update Text block '{blockID}' with '{type}': {e}")
             return 0
-    def addContentBlock(self, blockID, blockType, content, textBookID, chapterID, sectionID, userID):
+    def addContentBlock(self, ebook):
+        blockID, blockType, content, textBookID, chapterID, sectionID, userID = ebook['contentblockID'], ebook['blockType'], ebook['content'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']
         query = "INSERT INTO ContentBlock (blockID, blockType, content, textBookID, chapterID, sectionID, userID) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         try:
             cursor = self.db.execute_query(query, (blockID, blockType, content, textBookID, chapterID, sectionID, userID))
@@ -107,14 +115,14 @@ class BookModel:
     def addContentTransaction(self, ebook):
         try:
             self.db.connection.start_transaction()
-            if(self.getETextBookById(ebook['textBookID'], ebook['userID']) is None):
-                self.addEtextbook(ebook['textBookID'], ebook['title'], ebook['userID'])
-            if(self.getchapterByTextBookId_chapterID(ebook['textBookID'], ebook['chapterID'], ebook['userID']) is None):
-                self.addChapter(ebook['chapterID'], ebook['chapterTitle'], ebook['textBookID'], ebook['userID'])
-            if(self.getSectionByChapterID_SectionID(ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']) is None):
-                self.addSection(ebook['sectionID'], ebook['sectionTitle'], ebook['textBookID'], ebook['chapterID'], ebook['userID'])
-            if(self.getContentBlock(ebook['contentblockID'], ebook['blockType'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']) is None):
-                self.addContentBlock(ebook['contentblockID'], ebook['blockType'], ebook['content'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID'])
+            if(self.getETextBookById(ebook) is None):
+                self.addEtextbook(ebook)
+            if(self.getchapterByTextBookId_chapterID(ebook) is None):
+                self.addChapter(ebook)
+            if(self.getSectionByChapterID_SectionID(ebook) is None):
+                self.addSection(ebook)
+            if(self.getContentBlock(ebook) is None):
+                self.addContentBlock(ebook)
             else:
                 print("You can not add the content block as it already exists. You can modify it.")
             self.db.connection.commit()
@@ -125,7 +133,8 @@ class BookModel:
                 print("Transaction rolled back due to error:", e)
             return 0
 
-    def getQuestionById(self, questionID, activityID, blockID, sectionID, chapterID, textBookID, userID):
+    def getQuestionById(self, ebook):
+        questionID, activityID, blockID, sectionID, chapterID, textBookID, userID = ebook['questionID'], ebook['activityID'], ebook['contentblockID'], ebook['sectionID'], ebook['chapterID'], ebook['textBookID'], ebook['userID']
         query = "SELECT * FROM Question WHERE questionID = %s AND activityID = %s AND blockID = %s AND sectionID = %s AND chapterID = %s AND textBookID = %s AND userID = %s"
         try:
             cursor = self.db.execute_query(query, (questionID, activityID, blockID, sectionID, chapterID, textBookID, userID,))
@@ -135,7 +144,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get Question with ID {questionID}: {e}")
             return None
-    def addQuestion(self, questionID, textBookID, chapterID, sectionID, blockID, activityID, question, OP1, OP1_EXP, OP1_Label, OP2, OP2_EXP, OP2_Label, OP3, OP3_EXP, OP3_Label, OP4, OP4_EXP, OP4_Label, userID):
+    def addQuestion(self, ebook):
+        questionID, textBookID, chapterID, sectionID, blockID, activityID, question, OP1, OP1_EXP, OP1_Label, OP2, OP2_EXP, OP2_Label, OP3, OP3_EXP, OP3_Label, OP4, OP4_EXP, OP4_Label, userID = ebook['questionID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['activityID'], ebook['question'], ebook['OP1'], ebook['OP1_EXP'], ebook['OP1_Label'], ebook['OP2'], ebook['OP2_EXP'], ebook['OP2_Label'], ebook['OP3'], ebook['OP3_EXP'], ebook['OP3_Label'], ebook['OP4'], ebook['OP4_EXP'], ebook['OP4_Label'], ebook['userID']
         query = "INSERT INTO Question (questionID, textBookID, chapterID, sectionID, blockID, activityID, question, OP1, OP1_EXP, OP1_Label, OP2, OP2_EXP, OP2_Label, OP3, OP3_EXP, OP3_Label, OP4, OP4_EXP, OP4_Label, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         try:
             cursor = self.db.execute_query(query, (questionID, textBookID, chapterID, sectionID, blockID, activityID, question, OP1, OP1_EXP, OP1_Label, OP2, OP2_EXP, OP2_Label, OP3, OP3_EXP, OP3_Label, OP4, OP4_EXP, OP4_Label, userID))
@@ -147,7 +157,8 @@ class BookModel:
             print(f"Failed to create Question '{questionID}': {e}")
             return 0
     
-    def getActivtyById(self, activityID, textBookID, chapterID, sectionID, blockID, userID):
+    def getActivtyById(self, ebook):
+        activityID, textBookID, chapterID, sectionID, blockID, userID = ebook['activityID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['userID']
         query = "SELECT * FROM Activity WHERE activityID = %s AND textBookID = %s AND chapterID = %s AND sectionID = %s AND blockID = %s AND userID = %s"
         try:
             cursor = self.db.execute_query(query, (activityID, textBookID, chapterID, sectionID, blockID, userID))
@@ -157,7 +168,8 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get Activity with ID {activityID}: {e}")
             return None
-    def addActivity(self, activityID, textBookID, chapterID, sectionID, blockID, userID):
+    def addActivity(self, ebook):
+        activityID, textBookID, chapterID, sectionID, blockID, userID = ebook['activityID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['userID']
         query = "INSERT INTO Activity (activityID, textBookID, chapterID, sectionID, blockID, userID) VALUES (%s, %s, %s, %s, %s, %s)"
         try:
             cursor = self.db.execute_query(query, (activityID, textBookID, chapterID, sectionID, blockID, userID))
@@ -171,18 +183,18 @@ class BookModel:
     def addActivtyTransaction(self, ebook):
         try:
             self.db.connection.start_transaction()
-            if(self.getETextBookById(ebook['textBookID'], ebook['userID']) is None):
-                self.addEtextbook(ebook['textBookID'], ebook['title'], ebook['userID'])
-            if(self.getchapterByTextBookId_chapterID(ebook['textBookID'], ebook['chapterID'], ebook['userID']) is None):
-                self.addChapter(ebook['chapterID'], ebook['chapterTitle'], ebook['textBookID'], ebook['userID'])
-            if(self.getSectionByChapterID_SectionID(ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']) is None):
-                self.addSection(ebook['sectionID'], ebook['sectionTitle'], ebook['textBookID'], ebook['chapterID'], ebook['userID'])
-            if(self.getContentBlock(ebook['contentblockID'], ebook['blockType'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']) is None):
-                self.addContentBlock(ebook['contentblockID'], ebook['blockType'], ebook['content'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID'])
-            if(self.getActivtyById(ebook['activityID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['userID']) is None):
-                self.addActivity(ebook['activityID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['userID'])
-            if(self.getQuestionById(ebook['questionID'], ebook['activityID'], ebook['contentblockID'], ebook['sectionID'], ebook['chapterID'], ebook['textBookID'], ebook['userID']) is None):
-                self.addQuestion(ebook['questionID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['activityID'], ebook['question'], ebook['OP1'], ebook['OP1_EXP'], ebook['OP1_Label'], ebook['OP2'], ebook['OP2_EXP'], ebook['OP2_Label'], ebook['OP3'], ebook['OP3_EXP'], ebook['OP3_Label'], ebook['OP4'], ebook['OP4_EXP'], ebook['OP4_Label'], ebook['userID'])
+            if(self.getETextBookById(ebook) is None):
+                self.addEtextbook(ebook)
+            if(self.getchapterByTextBookId_chapterID(ebook) is None):
+                self.addChapter(ebook)
+            if(self.getSectionByChapterID_SectionID(ebook) is None):
+                self.addSection(ebook)
+            if(self.getContentBlock(ebook) is None):
+                self.addContentBlock(ebook)
+            if(self.getActivtyById(ebook) is None):
+                self.addActivity(ebook)
+            if(self.getQuestionById(ebook) is None):
+                self.addQuestion(ebook)
             else:
                 print("You can not add the same question ID as it already exists. You can modify it.")
             
