@@ -1,16 +1,20 @@
 from controllers.user_controller import UserController
 from controllers.admin_controller import AdminController
 from controllers.faculty_controller import FacultyController
+from controllers.student_controller import StudentController
 from models.book_model import BookModel
 from models.course_model import CourseModel
+from models.student_model import StudentModel
 
 class App:
     def __init__(self):
         self.user_controller = UserController()
         self.admin_controller = AdminController()
         self.faculty_controller = FacultyController()
+        self.student_controller = StudentController()
         self.book_model = BookModel()
         self.course_model = CourseModel()
+        self.student_model = StudentModel()
 
     def check(self):
         ebook = {
@@ -40,17 +44,26 @@ class App:
             'OP4_EXP': 'EXP-4',
             'OP4_Label': 'Incorrect'
         }
+        # self.book_model.addActivtyTransaction(ebook)
         # self.book_model.modifyContentTransaction(ebook, "activity")
         course = {
-            'courseID': 1,
-            'title': 'Database Management System',
-            'textBookID': 1,
+            'courseID': 3,
+            'title': 'DBMS',
+            'textBookID': 2,
             'userID': 1,
             'startDate': '2021-09-01',
             'endDate': '2021-12-01',
-            'courseType': 'Evaluation'
+            'courseType': 'Active'
         }
-        self.course_model.add_course(course)
+        # self.course_model.add_course(course)
+        # ebooks = self.student_model.get_enrolled_courses_by_userID(userID=4)
+        # print("Enrolled Courses:", ebooks)
+        # print("E-TextBooks:", ebooks[0])
+        # for i, ebook in enumerate(ebooks, start=1):
+        #     textBookID, courseID, ebookTitle = ebook
+        #     print(f"E-TextBook-{i}: {ebookTitle}")
+        #     chapters = self.student_model.get_chapters_by_id(courseID, textBookID)
+        #     print("Chapters:", chapters)
 
     def run(self):
         self.check()

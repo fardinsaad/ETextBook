@@ -488,8 +488,13 @@ class AdminController:
                         self.admin_view.display_message("Course ID already exists! Try again.")
                         self.create_active_course()
                     else:
-                        self.course_model.add_course(course)
-                        self.course_model.add_active_course(course)
+                        # need to check uToken exists and length of uToken is 7
+                        if(course['uToken'] and len(course['uToken']) == 7):    
+                            self.course_model.add_course(course)
+                            self.course_model.add_active_course(course)
+                        else:
+                            self.admin_view.display_message("Invalid uToken! Try again.")
+                            self.create_active_course()
                 
         elif choice == '2' or choice == '3':
             self.landing_page()

@@ -44,9 +44,7 @@ CREATE TABLE ETextBook.ETbook(
 -- Done
 CREATE TABLE ETextBook.Chapter(
     chapterID VARCHAR(20), -- SHOULD BE CHAR(6)
-    -- primaryChapterNumber INT NOT NULL,
     title VARCHAR(255) NOT NULL,
-    -- secondaryChapterNumber INT,
     textBookID INT,
     userID VARCHAR(20) NOT NULL,
     UNIQUE(title, textBookID),
@@ -154,13 +152,13 @@ CREATE TABLE ETextBook.ActiveCourse (
     FOREIGN KEY (courseID) REFERENCES Course(courseID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE ETextBook.EnrollmentWaitlist (
-    uToken CHAR(7),
-    studentID VARCHAR(20),
-    PRIMARY KEY (uToken, studentID),
-    FOREIGN KEY (uToken) REFERENCES ActiveCourse(uToken),
-    FOREIGN KEY (studentID) REFERENCES User(userID)
-);
+-- CREATE TABLE ETextBook.EnrollmentWaitlist (
+--     uToken CHAR(7),
+--     studentID VARCHAR(20),
+--     PRIMARY KEY (uToken, studentID),
+--     FOREIGN KEY (uToken) REFERENCES ActiveCourse(uToken),
+--     FOREIGN KEY (studentID) REFERENCES User(userID)
+-- );
 
 
 -- DONE
