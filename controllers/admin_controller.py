@@ -317,8 +317,8 @@ class AdminController:
             
     def modify_section(self):
         self.admin_view.navbar_menu(self.admin, "Modify Section")
-        textBookID = self.admin_view.get_text_input("Enter Unique E-textbook ID: ")
-        chapterID = self.admin_view.get_text_input("Enter Unique Chapter ID: ")
+        # textBookID = self.admin_view.get_text_input("Enter Unique E-textbook ID: ")
+        # chapterID = self.admin_view.get_text_input("Enter Unique Chapter ID: ")
         sectionID = self.admin_view.get_text_input("Enter Section Number: ")
         if self.issectionIDValid(sectionID):
             print("\n")
