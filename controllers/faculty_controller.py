@@ -5,9 +5,8 @@ from views.user_view import UserView
 
 class FacultyController:
     def __init__(self):
-        self.admin_model = AdminModel()
-        self.admin_view = AdminView()
         self.user_view = UserView()
+        self.faculty_model = FacultyModel()
         self.faculty = None
     
     def landing_page(self):
@@ -24,14 +23,14 @@ class FacultyController:
         #     self.admin_view.display_message("Invalid choice!")
 
     def login(self):
-        self.admin_view.display_message("\n\nFaculty | Login")
-        userID = self.admin_view.get_text_input("A. Enter user ID: ")
-        password = self.admin_view.get_password_input("B. Enter password: ")
-        self.admin_view.display_menu()
-        choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
+        self.user_view.display_message("\n\nFaculty | Login")
+        userID = self.user_view.get_text_input("A. Enter user ID: ")
+        password = self.user_view.get_password_input("B. Enter password: ")
+        self.user_view.get_user_signInMenu()
+        choice = self.user_view.get_text_input("Enter Choice (1-2): ")
         if choice == '1':
             user = self.faculty_model.get_user(userID, password)
-            self.admin = user
+            self.faculty = user
             if user:
                 self.landing_page()
             else:

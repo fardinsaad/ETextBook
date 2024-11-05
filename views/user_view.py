@@ -13,7 +13,11 @@ class UserView:
         return input(prompt)
 
     @staticmethod
-    def get_user_signInMenu(prompt):
+    def get_text_input(prompt):
+        return input(prompt)
+    
+    @staticmethod
+    def get_user_signInMenu():
         print("\n1. Sign In")
         print("2. Go Back") 
 

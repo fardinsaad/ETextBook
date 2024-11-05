@@ -7,6 +7,7 @@ class App:
     def __init__(self):
         self.user_controller = UserController()
         self.admin_controller = AdminController()
+        self.faculty_controller = FacultyController()
         self.book_model = BookModel()
 
     def check(self):
