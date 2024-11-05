@@ -12,20 +12,20 @@ class App:
 
     def check(self):
         ebook = {
-            'textBookID': 1,
-            'title': 'Mathematics',
+            'textBookID': 2,
+            'title': 'Database Management System',
             'userID': 1,
-            'chapterID': "chap02",
-            'chapterTitle': 'Faul',
+            'chapterID': "chap01",
+            'chapterTitle': 'Introduction',
             'sectionID': "Sec01",
-            'sectionTitle': 'intro',
+            'sectionTitle': 'RDBMS',
             'contentblockID': "Block01",
             'blockType': 'activity',
             'content': 'ACT01',
             'activityID': 'ACT01',
-            'questionID': 'Q03',
-            'question': 'What is 2+2?',
-            'OP1': '1',
+            'questionID': 'Q1',
+            'question': 'What is 2+3?',
+            'OP1': '4',
             'OP1_EXP': 'EXP-1',
             'OP1_Label': 'Correct',
             'OP2': '2',
@@ -38,7 +38,7 @@ class App:
             'OP4_EXP': 'EXP-4',
             'OP4_Label': 'Incorrect'
         }
-        self.book_model.addActivtyTransaction(ebook)
+        self.book_model.modifyContentTransaction(ebook, "activity")
 
     def run(self):
         self.check()

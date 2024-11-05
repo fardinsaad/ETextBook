@@ -4,6 +4,16 @@ from mysql.connector import Error
 class BookModel:
     def __init__(self):
         self.db = Database()
+        
+    def getdata(self, query):
+        try:
+            cursor = self.db.execute_query(query)
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Failed to get E-textbook data: {e}")
+            return None
 
     def getETextBookById(self, ebook):
         textBookID, userID = ebook['textBookID'], ebook['userID']
@@ -16,6 +26,7 @@ class BookModel:
         except Exception as e:
             print(f"Failed to get E-textbook with ID {textBookID}: {e}")
             return None
+        
     def addEtextbook(self, ebook):
         textBookID, title, userID = ebook['textBookID'], ebook['title'], ebook['userID']
         query = "INSERT INTO ETbook (textBookID, title, userID) VALUES (%s, %s, %s)"
@@ -99,6 +110,7 @@ class BookModel:
         except Exception as e:
             print(f"Failed to update Text block '{blockID}' with '{type}': {e}")
             return 0
+        
     def addContentBlock(self, ebook):
         blockID, blockType, content, textBookID, chapterID, sectionID, userID = ebook['contentblockID'], ebook['blockType'], ebook['content'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']
         query = "INSERT INTO ContentBlock (blockID, blockType, content, textBookID, chapterID, sectionID, userID) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -206,3 +218,46 @@ class BookModel:
                 print("Transaction rolled back due to error:", e)
             return 0
     
+    def update_modifiedContentBlock(self, ebook):
+        blockID, blockType, content, textBookID, chapterID, sectionID, userID = ebook['contentblockID'], ebook['blockType'], ebook['content'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['userID']
+        query = "UPDATE ContentBlock SET content = %s WHERE blockID = %s AND blockType = %s AND textBookID = %s AND chapterID = %s AND sectionID = %s AND userID = %s"
+        try:
+            cursor = self.db.execute_query(query, (content, blockID, blockType, textBookID, chapterID, sectionID, userID))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            print(f"Text block '{blockID}' with '{type}' updated successfully!")
+            return 1
+        except Exception as e:
+            print(f"Failed to update Text block '{blockID}' with '{type}': {e}")
+            return 0
+    def update_modifiedActivityQuestion(self, ebook):
+        questionID, textBookID, chapterID, sectionID, blockID, activityID, question, OP1, OP1_EXP, OP1_Label, OP2, OP2_EXP, OP2_Label, OP3, OP3_EXP, OP3_Label, OP4, OP4_EXP, OP4_Label, userID = ebook['questionID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['activityID'], ebook['question'], ebook['OP1'], ebook['OP1_EXP'], ebook['OP1_Label'], ebook['OP2'], ebook['OP2_EXP'], ebook['OP2_Label'], ebook['OP3'], ebook['OP3_EXP'], ebook['OP3_Label'], ebook['OP4'], ebook['OP4_EXP'], ebook['OP4_Label'], ebook['userID']
+        query = "UPDATE Question SET question = %s, OP1 = %s, OP1_EXP = %s, OP1_Label = %s, OP2 = %s, OP2_EXP = %s, OP2_Label = %s, OP3 = %s, OP3_EXP = %s, OP3_Label = %s, OP4 = %s, OP4_EXP = %s, OP4_Label = %s WHERE questionID = %s AND activityID = %s AND blockID = %s AND sectionID = %s AND chapterID = %s AND textBookID = %s AND userID = %s"
+        try:
+            cursor = self.db.execute_query(query, (question, OP1, OP1_EXP, OP1_Label, OP2, OP2_EXP, OP2_Label, OP3, OP3_EXP, OP3_Label, OP4, OP4_EXP, OP4_Label, questionID, activityID, blockID, sectionID, chapterID, textBookID, userID))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            print(f"Question '{questionID}' updated successfully!")
+            return 1
+        except Exception as e:
+            print(f"Failed to update Question '{questionID}': {e}")
+            return 0
+    
+    
+    def modifyContentTransaction(self, ebook, type):
+        try:
+            self.db.connection.start_transaction()
+            if(self.getContentBlock(ebook) is not None):
+                if type == "text" or type == "picture":
+                    self.update_modifiedContentBlock(ebook)
+                elif type == "activity":
+                    self.update_modifiedActivityQuestion(ebook)
+            else:
+                print("You can not modify the content block as it does not exist. You can add it.")
+            self.db.connection.commit()
+            return 1
+        except Error as e:
+            if self.db.connection.is_connected():
+                self.db.connection.rollback()
+                print("Transaction rolled back due to error:", e)
+            return 0
