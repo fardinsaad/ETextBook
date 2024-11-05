@@ -2,6 +2,7 @@ from controllers.user_controller import UserController
 from controllers.admin_controller import AdminController
 from controllers.faculty_controller import FacultyController
 from models.book_model import BookModel
+from models.course_model import CourseModel
 
 class App:
     def __init__(self):
@@ -9,6 +10,7 @@ class App:
         self.admin_controller = AdminController()
         self.faculty_controller = FacultyController()
         self.book_model = BookModel()
+        self.course_model = CourseModel()
 
     def check(self):
         ebook = {
@@ -38,7 +40,17 @@ class App:
             'OP4_EXP': 'EXP-4',
             'OP4_Label': 'Incorrect'
         }
-        self.book_model.modifyContentTransaction(ebook, "activity")
+        # self.book_model.modifyContentTransaction(ebook, "activity")
+        course = {
+            'courseID': 1,
+            'title': 'Database Management System',
+            'textBookID': 1,
+            'userID': 1,
+            'startDate': '2021-09-01',
+            'endDate': '2021-12-01',
+            'courseType': 'Evaluation'
+        }
+        self.course_model.add_course(course)
 
     def run(self):
         self.check()

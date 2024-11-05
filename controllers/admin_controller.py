@@ -1,15 +1,19 @@
 import re
 from models.admin_model import AdminModel
 from views.admin_view import AdminView
+from models.user_model import UserModel
 from views.user_view import UserView
 from models.book_model import BookModel
+from models.course_model import CourseModel
 
 class AdminController:
     def __init__(self):
         self.admin_model = AdminModel()
         self.admin_view = AdminView()
+        self.user_model = UserModel()
         self.user_view = UserView()
         self.book_model = BookModel()
+        self.course_model = CourseModel()
         self.admin = None
         self.ebook = {}
     
@@ -453,6 +457,41 @@ class AdminController:
         else:
             self.admin_view.display_message("Invalid choice!")
 
+    def create_active_course(self):
+        pass
+    def create_evaluation_course(self):
+        course = {}
+        self.admin_view.navbar_menu(self.admin, "Create New Evaluation Course")
+        course['courseID'] = self.admin_view.get_text_input("Enter Unique Course ID: ")
+        course['title'] = self.admin_view.get_text_input("Enter Course Name: ")
+        course['textBookID'] = self.admin_view.get_text_input("Enter Unique E-textbook ID: ")
+        course['userID'] = self.admin_view.get_text_input("Enter Faculty Member ID: ")
+        course['startDate'] = self.admin_view.get_text_input("Enter Course Start Date: ")
+        course['endDate'] = self.admin_view.get_text_input("Enter Course End Date: ")
+        course['courseType'] = 'Evaluation'
+
+        self.admin_view.display_message("1. Save")
+        self.admin_view.display_message("2. Cancel")
+        self.admin_view.display_message("3. Landing Page")
+        choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+
+        if choice == '1':
+            if(self.user_model.get_user_by_userID(course['userID']) is None or self.user_model.get_user_by_userID(course['userID'])[5] != 'Faculty'):
+                self.admin_view.display_message("Faculty Member ID does not exist! Try again.")
+                self.create_evaluation_course()
+            else:
+                if(self.course_model.get_course_by_id(course['courseID'])):
+                    self.admin_view.display_message("Course ID already exists! Try again.")
+                    self.create_evaluation_course()
+                else:
+                    self.course_model.add_course(course)
+                
+        elif choice == '2' or choice == '3':
+            self.landing_page()
+        else:
+            self.admin_view.display_message("Invalid choice!")
+            self.create_evaluation_course()
+
     def landing_page(self):
         self.admin_view.navbar_menu(self.admin, "Landing Page")
         self.admin_view.landing_page_menu()
@@ -463,6 +502,10 @@ class AdminController:
             self.create_etextbook()
         elif choice == '3': # Modify E-textbook
             self.modify_etextbook()
+        elif choice == '4': # Create New Active Course
+            self.create_active_course()
+        elif choice == '5': # Create New Evaluation Course
+            self.create_evaluation_course()
         elif choice == '6':
             print("\nYou are logged out.")
         else:

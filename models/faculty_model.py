@@ -8,4 +8,8 @@ class FacultyModel:
         cursor = self.db.execute_query(query, (userID, password))
         user = cursor.fetchone()
         return user
+    def get_faculty_by_userID(self, userID):
+        query = "SELECT * FROM Faculty WHERE userID = %s"
+        cursor = self.db.execute_query(query, (userID,))
+        return cursor.fetchone()
 
