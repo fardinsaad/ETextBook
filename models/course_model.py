@@ -17,6 +17,19 @@ class CourseModel:
         except Exception as e:
             print(f"Failed to create Course '{courseID}': {e}")
             return 0
+    def add_active_course(self, course):
+        uToken, courseID, coursecapacity = course['uToken'], course['courseID'], course['coursecapacity']
+        query = "INSERT INTO ActiveCourse (uToken, courseID, coursecapacity) VALUES (%s, %s, %s)"
+        try:
+            cursor = self.db.execute_query(query, (uToken, courseID, coursecapacity))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            self.db.connection.commit()
+            print(f"Active Course '{courseID}' created successfully!")
+            return 1
+        except Exception as e:
+            print(f"Failed to create Active Course '{courseID}': {e}")
+            return 0
     def get_course_by_id(self, courseID):
         query = "SELECT * FROM Course WHERE courseID = %s"
         try:

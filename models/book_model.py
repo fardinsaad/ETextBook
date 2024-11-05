@@ -15,6 +15,17 @@ class BookModel:
             print(f"Failed to get E-textbook data: {e}")
             return None
 
+    def getBookById(self, textBookID):
+        query = "SELECT * FROM ETbook WHERE textBookID = %s"
+        try:
+            cursor = self.db.execute_query(query, (textBookID,))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            return cursor.fetchone()
+        except Exception as e:
+            print(f"Failed to get E-textbook with ID {textBookID}: {e}")
+            return None
+        
     def getETextBookById(self, ebook):
         textBookID, userID = ebook['textBookID'], ebook['userID']
         query = "SELECT * FROM ETbook WHERE textBookID = %s and userID = %s"

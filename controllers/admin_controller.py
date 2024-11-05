@@ -458,7 +458,45 @@ class AdminController:
             self.admin_view.display_message("Invalid choice!")
 
     def create_active_course(self):
-        pass
+        course = {}
+        self.admin_view.navbar_menu(self.admin, "Create New Active Course")
+        course['courseID'] = self.admin_view.get_text_input("Enter Unique Course ID: ")
+        course['title'] = self.admin_view.get_text_input("Enter Course Name: ")
+        course['textBookID'] = self.admin_view.get_text_input("Enter Unique E-textbook ID: ")
+        course['userID'] = self.admin_view.get_text_input("Enter Faculty Member ID: ")
+        course['startDate'] = self.admin_view.get_text_input("Enter Course Start Date: ")
+        course['endDate'] = self.admin_view.get_text_input("Enter Course End Date: ")
+        course['uToken'] = self.admin_view.get_text_input("Enter Unique Token: ")
+        course['coursecapacity'] = self.admin_view.get_text_input("Enter Course Capacity: ")
+        course['courseType'] = 'Active'
+
+        self.admin_view.display_message("1. Save")
+        self.admin_view.display_message("2. Cancel")
+        self.admin_view.display_message("3. Landing Page")
+        choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
+
+        if choice == '1':
+            if(self.book_model.getBookById(course['textBookID']) is None):
+                self.admin_view.display_message("E-textbook ID does not exist! Try again.")
+                self.create_active_course()
+            else:
+                if(self.user_model.get_user_by_userID(course['userID']) is None or self.user_model.get_user_by_userID(course['userID'])[5] != 'Faculty'):
+                    self.admin_view.display_message("Faculty Member ID does not exist! Try again.")
+                    self.create_active_course()
+                else:
+                    if(self.course_model.get_course_by_id(course['courseID'])):
+                        self.admin_view.display_message("Course ID already exists! Try again.")
+                        self.create_active_course()
+                    else:
+                        self.course_model.add_course(course)
+                        self.course_model.add_active_course(course)
+                
+        elif choice == '2' or choice == '3':
+            self.landing_page()
+        else:
+            self.admin_view.display_message("Invalid choice!")
+            self.create_evaluation_course()
+
     def create_evaluation_course(self):
         course = {}
         self.admin_view.navbar_menu(self.admin, "Create New Evaluation Course")
@@ -476,15 +514,19 @@ class AdminController:
         choice = self.admin_view.get_text_input("Enter Choice (1-3): ")
 
         if choice == '1':
-            if(self.user_model.get_user_by_userID(course['userID']) is None or self.user_model.get_user_by_userID(course['userID'])[5] != 'Faculty'):
-                self.admin_view.display_message("Faculty Member ID does not exist! Try again.")
+            if(self.book_model.getBookById(course['textBookID']) is None):
+                self.admin_view.display_message("E-textbook ID does not exist! Try again.")
                 self.create_evaluation_course()
             else:
-                if(self.course_model.get_course_by_id(course['courseID'])):
-                    self.admin_view.display_message("Course ID already exists! Try again.")
+                if(self.user_model.get_user_by_userID(course['userID']) is None or self.user_model.get_user_by_userID(course['userID'])[5] != 'Faculty'):
+                    self.admin_view.display_message("Faculty Member ID does not exist! Try again.")
                     self.create_evaluation_course()
                 else:
-                    self.course_model.add_course(course)
+                    if(self.course_model.get_course_by_id(course['courseID'])):
+                        self.admin_view.display_message("Course ID already exists! Try again.")
+                        self.create_evaluation_course()
+                    else:
+                        self.course_model.add_course(course)
                 
         elif choice == '2' or choice == '3':
             self.landing_page()
