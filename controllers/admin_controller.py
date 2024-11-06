@@ -171,18 +171,18 @@ class AdminController:
             if choice == '1':
                 self.ebook['questionID'] = questionID
                 self.ebook['question'] = question
-                self.ebook['option1'] = option1
-                self.ebook['option1Explanation'] = option1Explanation
-                self.ebook['option1Label'] = option1Label
-                self.ebook['option2'] = option2
-                self.ebook['option2Explanation'] = option2Explanation
-                self.ebook['option2Label'] = option2Label
-                self.ebook['option3'] = option3
-                self.ebook['option3Explanation'] = option3Explanation
-                self.ebook['option3Label'] = option3Label
-                self.ebook['option4'] = option4
-                self.ebook['option4Explanation'] = option4Explanation
-                self.ebook['option4Label'] = option4Label
+                self.ebook['OP1'] = option1
+                self.ebook['OP1_EXP'] = option1Explanation
+                self.ebook['OP1_Label'] = option1Label
+                self.ebook['OP2'] = option2
+                self.ebook['OP2_EXP'] = option2Explanation
+                self.ebook['OP2_Label'] = option2Label
+                self.ebook['OP3'] = option3
+                self.ebook['OP3_EXP'] = option3Explanation
+                self.ebook['OP3_Label'] = option3Label
+                self.ebook['OP4'] = option4
+                self.ebook['OP4_EXP'] = option4Explanation
+                self.ebook['OP4_Label'] = option4Label
                 if action == "create":
                     isSucceed = self.book_model.addActivtyTransaction(self.ebook)
                 elif action == "modify":
@@ -332,8 +332,9 @@ class AdminController:
             self.admin_view.display_message("4. Landing Page")
             choice = self.admin_view.get_text_input("Enter Choice (1-4): ")
             self.ebook['sectionID'] = sectionID
-            query = f"SELECT title FROM Section WHERE sectionID = {sectionID}"
-            sectionTitle = self.book_model.getdata(query)
+            query = "SELECT title FROM Section WHERE sectionID = %s AND chapterID = %s AND textBookID = %s"
+            params = (sectionID, self.ebook['chapterID'], self.ebook['textBookID'])
+            sectionTitle = self.book_model.getdata(query, params)
             if sectionTitle and len(sectionTitle) > 0:
                 self.ebook['sectionTitle'] = sectionTitle[0][0]
             else:
@@ -394,8 +395,9 @@ class AdminController:
             self.admin_view.display_message("4. Landing Page")
             choice = self.admin_view.get_text_input("Enter Choice (1-4): ")
             self.ebook['chapterID'] = chapterID
-            query = f"SELECT title FROM Chapter WHERE chapterID = {chapterID}"
-            chapterTitle = self.book_model.getdata(query)
+            query = "SELECT title FROM Chapter WHERE chapterID = %s AND textBookID = %s"
+            params = (chapterID, self.ebook['textBookID'])
+            chapterTitle = self.book_model.getdata(query, params)
             if chapterTitle and len(chapterTitle) > 0:
                 self.ebook['chapterTitle'] = chapterTitle[0][0]
             else:
@@ -441,8 +443,9 @@ class AdminController:
         self.admin_view.display_message("4. Landing Page")
         choice = self.admin_view.get_text_input("Enter Choice (1-4): ")
         self.ebook['textBookID'] = textBookID
-        query = f"SELECT title FROM ETBook WHERE textBookID = {textBookID}" 
-        title = self.book_model.getdata(query)
+        query = "SELECT title FROM ETBook WHERE textBookID = %s"
+        params = (textBookID)
+        title = self.book_model.getdata(query, params)
         if title and len(title) > 0:
             self.ebook['title'] = title[0][0]
         else:

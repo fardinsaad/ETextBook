@@ -18,22 +18,23 @@ class App:
         self.book_model = BookModel()
         self.course_model = CourseModel()
         self.student_model = StudentModel()
+        self.ta_model = TAModel()
 
     def check(self):
         ebook = {
             'textBookID': 2,
             'title': 'Database Management System',
-            'userID': 1,
-            'chapterID': "chap01",
-            'chapterTitle': 'Introduction',
-            'sectionID': "Sec01",
-            'sectionTitle': 'RDBMS',
+            'userID': 2,
+            'chapterID': "chap05",
+            'chapterTitle': 'asss',
+            'sectionID': "Sec02",
+            'sectionTitle': 'plssss',
             'contentblockID': "Block01",
             'blockType': 'activity',
             'content': 'ACT01',
             'activityID': 'ACT01',
             'questionID': 'Q1',
-            'question': 'What is 2+3?',
+            'question': 'What is 2+10?',
             'OP1': '4',
             'OP1_EXP': 'EXP-1',
             'OP1_Label': 'Correct',
@@ -47,7 +48,8 @@ class App:
             'OP4_EXP': 'EXP-4',
             'OP4_Label': 'Incorrect'
         }
-        # self.book_model.addActivtyTransaction(ebook)
+        self.ta_model.addContentTransaction(ebook)
+        self.book_model.addActivtyTransaction(ebook)
         # self.book_model.modifyContentTransaction(ebook, "activity")
         course = {
             'courseID': 2,
@@ -58,7 +60,7 @@ class App:
             'endDate': '2021-12-01',
             'courseType': 'Active'
         }
-        self.course_model.add_course(course)
+        # self.course_model.add_course(course)
         # ebooks = self.student_model.get_enrolled_courses_by_userID(userID=4)
         # print("Enrolled Courses:", ebooks)
         # print("E-TextBooks:", ebooks[0])

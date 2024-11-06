@@ -1,7 +1,7 @@
 class UserView:
     @staticmethod
     def navbar_menu(user, title):
-        print(f"\n\nAdmin: {user[2]} {user[3]} | {title}")
+        print(f"\n\n{user[5]}: {user[2]} {user[3]} | {title}")
         
     @staticmethod
     def display_menu():

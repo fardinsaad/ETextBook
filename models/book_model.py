@@ -5,7 +5,7 @@ class BookModel:
     def __init__(self):
         self.db = Database()
         
-    def getdata(self, query):
+    def getdata_b(self, query):
         try:
             cursor = self.db.execute_query(query)
             if cursor is None:
@@ -13,6 +13,27 @@ class BookModel:
             return cursor.fetchall()
         except Exception as e:
             print(f"Failed to get E-textbook data: {e}")
+            return None
+        
+    def getdata(self, query, params=None):
+        try:
+            cursor = self.db.execute_query(query, params)
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Failed to get E-textbook data: {e}")
+            return None
+        
+    def get_textbookID_by_courseID(self, courseID):
+        query = "SELECT textBookID FROM Course WHERE courseID = %s"
+        try:
+            cursor = self.db.execute_query(query, (courseID,))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            return cursor.fetchone()
+        except Exception as e:
+            print(f"Failed to get E-textbook with courseID {courseID}: {e}")
             return None
 
     def getBookById(self, textBookID):
@@ -27,10 +48,10 @@ class BookModel:
             return None
         
     def getETextBookById(self, ebook):
-        textBookID, userID = ebook['textBookID'], ebook['userID']
-        query = "SELECT * FROM ETbook WHERE textBookID = %s and userID = %s"
+        textBookID = ebook['textBookID']
+        query = "SELECT * FROM ETbook WHERE textBookID = %s"
         try:
-            cursor = self.db.execute_query(query, (textBookID, userID,))
+            cursor = self.db.execute_query(query, (textBookID,))
             if cursor is None:
                 raise Exception("Query Execution Failed!!!!")
             return cursor.fetchone()
@@ -137,7 +158,8 @@ class BookModel:
         
     def addContentTransaction(self, ebook):
         try:
-            self.db.connection.start_transaction()
+            if not self.db.connection.in_transaction:
+                self.db.connection.start_transaction()
             if(self.getETextBookById(ebook) is None):
                 self.addEtextbook(ebook)
             if(self.getchapterByTextBookId_chapterID(ebook) is None):
@@ -205,7 +227,8 @@ class BookModel:
             return 0
     def addActivtyTransaction(self, ebook):
         try:
-            self.db.connection.start_transaction()
+            if not self.db.connection.in_transaction:
+                self.db.connection.start_transaction()
             if(self.getETextBookById(ebook) is None):
                 self.addEtextbook(ebook)
             if(self.getchapterByTextBookId_chapterID(ebook) is None):
@@ -257,7 +280,8 @@ class BookModel:
     
     def modifyContentTransaction(self, ebook, type):
         try:
-            self.db.connection.start_transaction()
+            if not self.db.connection.in_transaction:
+                self.db.connection.start_transaction()
             if(self.getContentBlock(ebook) is not None):
                 if type == "text" or type == "picture":
                     self.update_modifiedContentBlock(ebook)
