@@ -2,9 +2,11 @@ from controllers.user_controller import UserController
 from controllers.admin_controller import AdminController
 from controllers.faculty_controller import FacultyController
 from controllers.student_controller import StudentController
+from controllers.ta_controller import TAController
 from models.book_model import BookModel
 from models.course_model import CourseModel
 from models.student_model import StudentModel
+from models.ta_model import TAModel
 
 class App:
     def __init__(self):
@@ -12,6 +14,7 @@ class App:
         self.admin_controller = AdminController()
         self.faculty_controller = FacultyController()
         self.student_controller = StudentController()
+        self.TA_controller = TAController()
         self.book_model = BookModel()
         self.course_model = CourseModel()
         self.student_model = StudentModel()
