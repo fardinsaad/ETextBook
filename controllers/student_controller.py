@@ -47,9 +47,28 @@ class StudentController:
             self.landing_page()
         else:
             self.user_view.display_message("Invalid choice!")
+            self.enroll()
 
     def view_section(self):
-        pass
+        self.user_view.display_message("\nStudent | View Section")
+        courseID = self.user_view.get_text_input("Enter Course ID: ")
+        textBookID = self.user_view.get_text_input("Enter TextBook ID: ")
+        chapterID = self.user_view.get_text_input("Enter Chapter ID: ")
+        sectionID = self.user_view.get_text_input("Enter Section ID: ")
+        
+        self.user_view.display_message("1. View Block")
+        self.user_view.display_message("2. Go back")
+        choice = self.user_view.get_text_input("Enter Choice (1): ")
+        if choice == '1':
+            print("View Block")
+            print("Requirement is not clear. Please provide more information.")
+            pass
+        elif choice == '2':
+            self.landing_page()
+        else:
+            self.user_view.display_message("Invalid choice!")
+            self.view_section()
+
     def view_participation_activity_points(self):
         self.user_view.display_message("\nStudent | View Participation Activity Points")
         total_score = self.student_model.get_participation_activity_point_by_userID(self.student[0])
