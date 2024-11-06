@@ -2,6 +2,13 @@
 
 Welcome to your E-Text book application
 
+Group (23) Member Info:
+
+    1. Md Nazmul Haque (mhaque4)
+    2. Fardin Saad (fsaad)
+    3. Sanjana Cheerla (scheerl)
+    4. Rawshan Mowri (rmowri)
+
 Installation Process
 
 1.  install mysql community server: https://dev.mysql.com/downloads/mysql/
@@ -21,7 +28,14 @@ Installation Process
     vir_env.bat
     ```
 
-5.  run the code:
+5.  Create a `.env` file and put the following info
+
+        DB_HOST=localhost
+        DB_USER=root # put your db user name
+        DB_PASSWORD=root@123 #put your mysql db password
+        DB_NAME=ETextBook
+
+6.  run the code:
     ```python
     python3 app.py
     ```
