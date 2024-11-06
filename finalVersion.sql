@@ -41,9 +41,48 @@ CREATE TABLE ETextBook.ETbook(
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- prcodedure
+DELIMITER $$
+
+CREATE TRIGGER after_user_insert
+AFTER INSERT ON ETextBook.User
+FOR EACH ROW
+BEGIN
+    IF NEW.role = 'Admin' THEN
+        INSERT INTO ETextBook.Admin (AID) VALUES (NEW.userID);
+    ELSEIF NEW.role = 'TA' THEN
+        INSERT INTO ETextBook.TA (TAID) VALUES (NEW.userID);
+    ELSEIF NEW.role = 'Faculty' THEN
+        INSERT INTO ETextBook.Faculty (FID) VALUES (NEW.userID);
+    ELSEIF NEW.role = 'Student' THEN
+        INSERT INTO ETextBook.Student (SID) VALUES (NEW.userID);
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- Create the stored procedure to insert a new user
+DELIMITER $$
+
+CREATE PROCEDURE AddUser(
+    IN p_userID VARCHAR(20),
+    IN p_firstName VARCHAR(20),
+    IN p_lastName VARCHAR(20),
+    IN p_email VARCHAR(50),
+    IN p_password VARCHAR(20),
+    IN p_role TEXT
+)
+BEGIN
+    -- Insert into User table
+    INSERT INTO ETextBook.User (userID, firstName, lastName, email, password, role)
+    VALUES (p_userID, p_firstName, p_lastName, p_email, p_password, p_role);
+END$$
+
+DELIMITER ;
+
 -- Done
 CREATE TABLE ETextBook.Chapter(
-    chapterID VARCHAR(20), -- SHOULD BE CHAR(6)
+    chapterID VARCHAR(20),
     title VARCHAR(255) NOT NULL,
     textBookID INT,
     userID VARCHAR(20) NOT NULL,
@@ -140,7 +179,8 @@ CREATE TABLE ETextBook.Course (
     userID VARCHAR(20) NOT NULL,  
     startDate DATE NOT NULL,
     endDate DATE NOT NULL,
-    courseType TEXT CHECK (courseType IN ('Active', 'Evaluation')), 
+    courseType TEXT CHECK (courseType IN ('Active', 'Evaluation')),
+    CHECK (endDate >= startDate),
     FOREIGN KEY (textBookID) REFERENCES ETbook(textBookID) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (userID) REFERENCES User(userID) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -173,7 +213,7 @@ CREATE TABLE ETextBook.ActiveEnrollment (
 
 -- DONE
 CREATE TABLE ETextBook.Notification (
-    notificationID INT,
+    notificationID INT AUTO_INCREMENT,
     userID VARCHAR(20) NOT NULL,
     n_message TEXT NOT NULL,
     isRead BOOLEAN DEFAULT FALSE,

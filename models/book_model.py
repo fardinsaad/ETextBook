@@ -225,6 +225,7 @@ class BookModel:
         except Exception as e:
             print(f"Failed to create Activity '{activityID}': {e}")
             return 0
+        
     def addActivtyTransaction(self, ebook):
         try:
             if not self.db.connection.in_transaction:

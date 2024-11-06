@@ -1,0 +1,20 @@
+USE ETextBook;
+
+CALL CreateUserTable();
+CALL CreateAdminTable();
+CALL CreateTATable();
+CALL CreateFacultyTable();
+CALL CreateStudentTable();
+CALL CreateETbookTable();
+CALL CreateChapterTable();
+CALL CreateSectionTable();
+CALL CreateContentBlockTable();
+CALL CreateActivityTable();
+CALL CreateQuestionTable();
+CALL CreateCourseTable();
+CALL CreateActiveCourseTable();
+CALL CreateActiveEnrollmentTable();
+CALL CreateNotificationTable();
+CALL CreateActiveCourseTATable();
+CALL CreateContentUserActivityTable();
+CALL CreateStudentActivityTable();
