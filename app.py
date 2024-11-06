@@ -47,15 +47,15 @@ class App:
         # self.book_model.addActivtyTransaction(ebook)
         # self.book_model.modifyContentTransaction(ebook, "activity")
         course = {
-            'courseID': 3,
-            'title': 'DBMS',
-            'textBookID': 2,
+            'courseID': 2,
+            'title': 'Mathematical Analysis',
+            'textBookID': 1,
             'userID': 1,
             'startDate': '2021-09-01',
             'endDate': '2021-12-01',
             'courseType': 'Active'
         }
-        # self.course_model.add_course(course)
+        self.course_model.add_course(course)
         # ebooks = self.student_model.get_enrolled_courses_by_userID(userID=4)
         # print("Enrolled Courses:", ebooks)
         # print("E-TextBooks:", ebooks[0])

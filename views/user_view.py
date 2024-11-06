@@ -1,5 +1,9 @@
 class UserView:
     @staticmethod
+    def navbar_menu(user, title):
+        print(f"\n\nAdmin: {user[2]} {user[3]} | {title}")
+        
+    @staticmethod
     def display_menu():
         print("\nHome | Display Menu\n")
         print("1. Admin Login")
