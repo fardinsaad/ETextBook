@@ -243,4 +243,31 @@ BEGIN
     VALUES (p_studentID, p_textBookID, p_uToken, p_chapterID, p_sectionID, p_blockID, p_activityID, p_questionID, p_score, p_time_stamp);
 END$$
 
+
+CREATE PROCEDURE AddContentUserActivity(
+    IN p_userID VARCHAR(20),
+    IN p_courseID VARCHAR(20),
+    IN p_textBookID INT,
+    IN p_chapterID VARCHAR(20),
+    IN p_sectionID VARCHAR(20),
+    IN p_blockID VARCHAR(20),
+    IN p_activityID VARCHAR(20),
+    IN p_questionID VARCHAR(20),
+    IN p_isHidden_chap VARCHAR(20),
+    IN p_isHidden_sec VARCHAR(20),
+    IN p_isHidden_block VARCHAR(20),
+    IN p_isHidden_act VARCHAR(20),
+    IN p_isHidden_ques VARCHAR(20)
+)
+BEGIN
+    INSERT INTO ETextBook.content_user_activity (
+        userID, courseID, textBookID, chapterID, sectionID, blockID, activityID, questionID, isHidden_chap, isHidden_sec, isHidden_block, isHidden_act, isHidden_ques
+    )
+    VALUES (
+        p_userID, p_courseID, p_textBookID, p_chapterID, p_sectionID, p_blockID, p_activityID, p_questionID, p_isHidden_chap, p_isHidden_sec, p_isHidden_block, p_isHidden_act, p_isHidden_ques
+    );
+END$$
+
 DELIMITER ;
+
+

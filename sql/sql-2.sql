@@ -379,4 +379,8 @@ CALL AddStudentActivity('ArMo1024', 101, 'XYJKLM', 'chap01', 'Sec02', 'Block01',
 CALL AddStudentActivity('ArMo1024', 101, 'XYJKLM', 'chap01', 'Sec02', 'Block01', 'ACT0', 'Q2', 3, '2024-08-01 05:03:00');
 CALL AddStudentActivity('FiWi1024', 102, 'LRUFND', 'chap01', 'Sec02', 'Block01', 'ACT0', 'Q1', 1, '2024-08-29 22:41:00');
 
+-- Call AddContentUserActivity procedure to insert new content user activities
+CALL AddContentUserActivity('SaMi1024', 'NCSUSaraCSC326F24', 102, 'chap02', 'Sec01', 'Block01', 'NULL', 'NULL', 'no', 'yes', 'yes', 'no', 'no');
+CALL AddContentUserActivity('JoDo1024', 'NCSUDoeCSC522F24', 103, 'chap01', 'Sec01', 'Block01', 'NULL', 'NULL', 'no', 'yes', 'yes', 'no', 'no');
+
 -- ------------------------------------  End Procedures of inserting sample data into tables ------------------------------------------
