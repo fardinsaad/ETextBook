@@ -82,24 +82,86 @@ DELIMITER //
 
 CREATE PROCEDURE GetContentsOfChapter02()
 BEGIN
-    SELECT cb.content
-    FROM ETextBook.ContentBlock cb
-    WHERE cb.chapterID = '02' AND cb.textBookID = 101
-    ORDER BY cb.sectionID, cb.blockID;
+    SELECT 
+    s.sectionID,
+    s.title AS section_title,
+    cb.blockID,
+    cb.blockType,
+    cb.content AS block_content,
+    a.activityID,
+    a.userID AS activity_userID,
+    q.questionID,
+    q.question,
+    q.OP1,
+    q.OP1_EXP,
+    q.OP1_Label,
+    q.OP2,
+    q.OP2_EXP,
+    q.OP2_Label,
+    q.OP3,
+    q.OP3_EXP,
+    q.OP3_Label,
+    q.OP4,
+    q.OP4_EXP,
+    q.OP4_Label
+	FROM 
+		ETextBook.Section s
+	JOIN 
+		ETextBook.ContentBlock cb ON s.sectionID = cb.sectionID AND s.chapterID = cb.chapterID AND s.textBookID = cb.textBookID
+	LEFT JOIN 
+		ETextBook.Activity a ON cb.blockID = a.blockID AND cb.sectionID = a.sectionID AND cb.chapterID = a.chapterID AND cb.textBookID = a.textBookID
+	LEFT JOIN 
+		ETextBook.Question q ON a.activityID = q.activityID AND a.blockID = q.blockID AND a.sectionID = q.sectionID AND a.chapterID = q.chapterID AND a.textBookID = q.textBookID
+	WHERE 
+		s.chapterID = 'chap02' AND s.textBookID = 101
+	ORDER BY 
+		s.sectionID, cb.blockID, a.activityID, q.questionID;
 END //
 
 DELIMITER ;
 CALL GetContentsOfChapter02()
 
--- 6. Contents of Chapter 02 of Textbook 101 in Proper Sequence
+# 6. Incorrect Answers and Explanations for Q2 of Activity0 in Sec02 of Chap01 in Textbook 101
 DELIMITER //
 
-CREATE PROCEDURE GetContentsOfChapter02()
+CREATE PROCEDURE GetIncorrectAnswersAndExplanations()
 BEGIN
-    SELECT cb.content
-    FROM ETextBook.ContentBlock cb
-    WHERE cb.chapterID = '02' AND cb.textBookID = 101
-    ORDER BY cb.sectionID, cb.blockID;
+    SELECT q.OP1 AS 'Incorrect Answer', q.OP1_EXP AS 'Explanation'
+    FROM ETextBook.Question q
+    WHERE q.questionID = 'Q2' AND q.activityID = 'ACT0' AND q.sectionID = 'Sec02' AND q.chapterID = 'chap01' AND q.textBookID = 101
+    AND q.OP1_Label != 'Correct'
+    UNION
+    SELECT q.OP2 AS 'Incorrect Answer', q.OP2_EXP AS 'Explanation'
+    FROM ETextBook.Question q
+    WHERE q.questionID = 'Q2' AND q.activityID = 'ACT0' AND q.sectionID = 'Sec02' AND q.chapterID = 'chap01' AND q.textBookID = 101
+    AND q.OP2_Label != 'Correct'
+    UNION
+    SELECT q.OP3 AS 'Incorrect Answer', q.OP3_EXP AS 'Explanation'
+    FROM ETextBook.Question q
+    WHERE q.questionID = 'Q2' AND q.activityID = 'ACT0' AND q.sectionID = 'Sec02' AND q.chapterID = 'chap01' AND q.textBookID = 101
+    AND q.OP3_Label != 'Correct'
+    UNION
+    SELECT q.OP4 AS 'Incorrect Answer', q.OP4_EXP AS 'Explanation'
+    FROM ETextBook.Question q
+    WHERE q.questionID = 'Q2' AND q.activityID = 'ACT0' AND q.sectionID = 'Sec02' AND q.chapterID = 'chap01' AND q.textBookID = 101
+    AND q.OP4_Label != 'Correct';
 END //
 
 DELIMITER ;
+CALL GetIncorrectAnswersAndExplanations()
+
+# 7. Books in Active Status by One Instructor and Evaluation Status by Another Instructor
+DELIMITER //
+
+CREATE PROCEDURE GetBooksInDifferentStatuses()
+BEGIN
+    SELECT DISTINCT c1.textBookID
+    FROM ETextBook.Course c1
+    JOIN ETextBook.Course c2 ON c1.textBookID = c2.textBookID
+    WHERE c1.courseType = 'Active' AND c2.courseType = 'Evaluation' AND c1.userID != c2.userID;
+END //
+
+DELIMITER ;
+CALL GetBooksInDifferentStatuses()
+
+

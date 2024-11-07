@@ -62,7 +62,7 @@ END //
 CREATE PROCEDURE CreateChapterTable()
 BEGIN
     CREATE TABLE IF NOT EXISTS Chapter(
-        chapterID VARCHAR(20), -- SHOULD BE CHAR(6)
+        chapterID VARCHAR(20),
         title VARCHAR(255) NOT NULL,
         textBookID INT,
         userID VARCHAR(20) NOT NULL,
