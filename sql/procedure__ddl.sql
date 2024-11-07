@@ -250,7 +250,7 @@ BEGIN
     CREATE TABLE IF NOT EXISTS StudentActivity (
         studentID VARCHAR(20),
         textBookID INT,
-        uToken VARCHAR(7),
+        uToken CHAR(7),
         chapterID VARCHAR(20),
         sectionID VARCHAR(20),
         blockID VARCHAR(20),
