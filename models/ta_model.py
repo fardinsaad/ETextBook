@@ -40,6 +40,7 @@ class TAModel:
         except Exception as e:
             print(f"Failed to get courses for TA '{TAID}': {e}")
             return None
+        
     def get_students_by_courseID(self, courseID):
         query = """
                 SELECT ae.studentID
@@ -277,11 +278,12 @@ class TAModel:
             cursor = self.db.execute_query(query, (content, userID, blockID, blockType, textBookID, chapterID, sectionID,))
             if cursor is None:
                 raise Exception("Query Execution Failed!!!!")
-            print(f"Text block '{blockID}' with '{type}' updated successfully!")
+            print(f"Content block '{blockID}' with '{type}' updated successfully!")
             return 1
         except Exception as e:
-            print(f"Failed to update Text block '{blockID}' with '{type}': {e}")
+            print(f"Failed to update Content block '{blockID}' with '{type}': {e}")
             return 0
+        
     def update_modifiedActivityQuestion(self, ebook):
         questionID, textBookID, chapterID, sectionID, blockID, activityID, question, OP1, OP1_EXP, OP1_Label, OP2, OP2_EXP, OP2_Label, OP3, OP3_EXP, OP3_Label, OP4, OP4_EXP, OP4_Label, userID = ebook['questionID'], ebook['textBookID'], ebook['chapterID'], ebook['sectionID'], ebook['contentblockID'], ebook['activityID'], ebook['question'], ebook['OP1'], ebook['OP1_EXP'], ebook['OP1_Label'], ebook['OP2'], ebook['OP2_EXP'], ebook['OP2_Label'], ebook['OP3'], ebook['OP3_EXP'], ebook['OP3_Label'], ebook['OP4'], ebook['OP4_EXP'], ebook['OP4_Label'], ebook['userID']
         query = "UPDATE Question SET question = %s, userID = %s, OP1 = %s, OP1_EXP = %s, OP1_Label = %s, OP2 = %s, OP2_EXP = %s, OP2_Label = %s, OP3 = %s, OP3_EXP = %s, OP3_Label = %s, OP4 = %s, OP4_EXP = %s, OP4_Label = %s WHERE questionID = %s AND activityID = %s AND blockID = %s AND sectionID = %s AND chapterID = %s AND textBookID = %s"
@@ -340,6 +342,10 @@ class TAModel:
             cursor = self.db.execute_query(query, (blockID, textBookID, chapterID, sectionID))
             if cursor is None:
                 raise Exception("Query Execution Failed!!!!")
+            if cursor.rowcount == 0:
+                print(f"No content block with ID '{blockID}' was deleted. You do not have permission to delete it.")
+                return 0
+            print(f"Content block '{blockID}' deleted successfully!")
             print(f"Text block '{blockID}' deleted successfully!")
             self.db.connection.commit()
             return 1
@@ -371,6 +377,29 @@ class TAModel:
             print(f"Failed to check if content block '{blockID}' exists in content_user_activity: {e}")
             return False
         
+    def checkHiddenStatusforblock(self, ebook):
+        blockID = ebook['contentblockID']
+        textBookID = ebook['textBookID']
+        chapterID = ebook['chapterID']
+        sectionID = ebook['sectionID']
+        userID = ebook['userID']
+        courseID = ebook['courseID']
+        
+        query = """
+            SELECT isHidden_block
+            FROM ETextBook.content_user_activity
+            WHERE blockID = %s AND textBookID = %s AND chapterID = %s AND sectionID = %s AND courseID = %s
+        """
+        try:
+            cursor = self.db.execute_query(query, (blockID, textBookID, chapterID, sectionID, courseID))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            result = cursor.fetchone()
+            return result[0]
+        except Exception as e:
+            print(f"Failed to check hidden status for block '{blockID}': {e}")
+            return None  
+        
         
     def hideContentBlock(self, ebook):
         blockID = ebook['contentblockID']
@@ -395,20 +424,24 @@ class TAModel:
             except Exception as e:
                 print(f"Failed to hide content block '{blockID}': {e}")
                 return 0
-        else:    
-            query = """
-                UPDATE ETextBook.content_user_activity
-                SET isHidden_block = 'yes', userID = %s
-                WHERE blockID = %s AND textBookID = %s AND chapterID = %s AND sectionID = %s AND courseID = %s
-            """
-            
-            try:
-                cursor = self.db.execute_query(query, (userID, blockID, textBookID, chapterID, sectionID, courseID))
-                if cursor is None:
-                    raise Exception("Query Execution Failed!!!!")
-                print(f"Content block '{blockID}' hidden successfully!")
-                self.db.connection.commit()
+        else:
+            if self.checkHiddenStatusforblock(ebook) == 'yes':
+                print(f"Content block '{blockID}' is already hidden!")
                 return 1
-            except Exception as e:
-                print(f"Failed to hide content block '{blockID}': {e}")
-                return 0
+            else:    
+                query = """
+                    UPDATE ETextBook.content_user_activity
+                    SET isHidden_block = 'yes', userID = %s
+                    WHERE blockID = %s AND textBookID = %s AND chapterID = %s AND sectionID = %s AND courseID = %s
+                """
+                
+                try:
+                    cursor = self.db.execute_query(query, (userID, blockID, textBookID, chapterID, sectionID, courseID))
+                    if cursor is None:
+                        raise Exception("Query Execution Failed!!!!")
+                    print(f"Content block '{blockID}' hidden successfully!")
+                    self.db.connection.commit()
+                    return 1
+                except Exception as e:
+                    print(f"Failed to hide content block '{blockID}': {e}")
+                    return 0

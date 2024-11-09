@@ -23,12 +23,26 @@ class Database:
                         print(f"Error connecting to MySQL: {e}")
                         cls._instance = None
         return cls._instance
+    
+    def reconnect(self):
+        """Reconnect to the database if the connection is closed."""
+        if not self.connection.is_connected():
+            print("Database connection is closed. Reconnecting...")
+            try:
+                self.connection = mysql.connector.connect(**DB_CONFIG)
+                if self.connection.is_connected():
+                    print("Reconnected to MySQL database")
+                else:
+                    print("Failed to reconnect to MySQL database")
+            except Error as e:
+                print(f"Error reconnecting to MySQL: {e}")
+                self.connection = None
 
     def execute_query(self, query, values=None):
         """Execute a query and return the cursor object or None."""
         if not self.connection.is_connected():
-            print("Database connection is closed.")
-            return None
+            # print("Database connection is closed.")
+            self.reconnect()
 
         try:
             cursor = self.connection.cursor()

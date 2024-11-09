@@ -21,6 +21,7 @@ class AdminModel:
         try:
             cursor = self.db.execute_query(query, (userID, firstName, lastName, email, password, "Faculty"))
             print("Faculty with userId: ", userID, " is created!!")
+            self.db.connection.commit()
             return cursor
         except Exception as e:
             print(f"Faculty account not created. Try again!.")  
