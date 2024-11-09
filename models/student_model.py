@@ -1,4 +1,5 @@
 from database.db_connection import Database
+import datetime
 
 class StudentModel:
     def __init__(self):
@@ -63,12 +64,26 @@ class StudentModel:
     
     def get_contentblocks_by_id(self, sectionID, chapterID, courseID, textBookID):
         query = """
-                SELECT cb.blockID, cb.blockType
+                SELECT cb.blockID, cb.blockType, cb.content
                 FROM ContentBlock cb
                 LEFT JOIN content_user_activity cua ON cb.blockID = cua.blockID AND cb.sectionID = cua.sectionID AND cb.chapterID = cua.chapterID AND cb.textBookID = cua.textBookID
                 WHERE cb.sectionID = %s AND cb.chapterID = %s AND cb.textBookID = %s AND (cua.courseID = %s OR cua.courseID IS NULL) AND (cua.isHidden_block = 'no' OR cua.isHidden_block IS NULL) ORDER BY cb.blockID
                 """
         cursor = self.db.execute_query(query, (sectionID, chapterID, textBookID, courseID))
+        return cursor.fetchall()
+    def get_questions_by_blockID(self, blockID, sectionID, chapterID, courseID, textBookID, activityID):
+        query = """
+                SELECT q.questionID, q.question, q.OP1, q.OP1_EXP, q.OP1_Label, q.OP2, q.OP2_EXP, q.OP2_Label, q.OP3, q.OP3_EXP, q.OP3_Label, q.OP4, q.OP4_EXP, q.OP4_Label
+                FROM Question q
+                LEFT JOIN content_user_activity cua ON q.questionID = cua.questionID AND q.blockID = cua.blockID AND q.sectionID = cua.sectionID AND q.chapterID = cua.chapterID AND q.textBookID = cua.textBookID
+                WHERE q.blockID = %s AND q.sectionID = %s AND q.chapterID = %s AND q.textBookID = %s AND q.activityID = %s AND (cua.courseID = %s OR cua.courseID IS NULL) AND (cua.isHidden_ques = 'no' OR cua.isHidden_ques IS NULL) ORDER BY q.questionID
+                """
+        cursor = self.db.execute_query(query, (blockID, sectionID, chapterID, textBookID, activityID, courseID))
+        return cursor.fetchall()
+    def get_unread_notifications_by_userID(self, userID):
+        query = "SELECT * FROM Notification WHERE userID = %s AND isRead = FALSE"
+
+        cursor = self.db.execute_query(query, (userID,))
         return cursor.fetchall()
     
     def enroll_student(self, studentID, uToken, c_status):
@@ -82,3 +97,38 @@ class StudentModel:
         except Exception as e:
             print(f"Failed to enroll student '{studentID}': {e}")
             return 0
+    def get_uToken_by_courseID(self, courseID):
+        query = "SELECT uToken FROM ActiveCourse WHERE courseID = %s"
+        cursor = self.db.execute_query(query, (courseID,))
+        result = cursor.fetchone()
+        return result[0] if result else None
+    def get_student_activity_score(self, userID, textBookID, uToken, chapterID, sectionID, blockID, activityID, questionID):
+        query = "SELECT score FROM StudentActivity WHERE studentID = %s AND textBookID = %s AND uToken = %s AND chapterID = %s AND sectionID = %s AND blockID = %s AND activityID = %s AND questionID = %s"
+        cursor = self.db.execute_query(query, (userID, textBookID, uToken, chapterID, sectionID, blockID, activityID, questionID))
+        result = cursor.fetchone()
+        return result[0] if result else None
+    def update_student_activity(self, userID, textBookID, uToken, chapterID, sectionID, blockID, activityID, questionID, score):
+        current_timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        query = "UPDATE StudentActivity SET score = %s, time_stamp = %s WHERE studentID = %s AND textBookID = %s AND uToken = %s AND chapterID = %s AND sectionID = %s AND blockID = %s AND activityID = %s AND questionID = %s"
+        try:
+            cursor = self.db.execute_query(query, (score, current_timestamp, userID, textBookID, uToken, chapterID, sectionID, blockID, activityID, questionID))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            self.db.connection.commit()
+            return 1
+        except Exception as e:
+            print(f"Failed to update student activity '{userID}': {e}")
+            return 0
+    def add_student_activity(self, userID, textBookID, uToken, chapterID, sectionID, blockID, activityID, questionID, score):
+        current_timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        query = "INSERT INTO StudentActivity (studentID, textBookID, uToken, chapterID, sectionID, blockID, activityID, questionID, score, time_stamp) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        try:
+            cursor = self.db.execute_query(query, (userID, textBookID, uToken, chapterID, sectionID, blockID, activityID, questionID, score, current_timestamp))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            self.db.connection.commit()
+            return 1
+        except Exception as e:
+            print(f"Failed to add student activity '{userID}': {e}")
+            return 0
+         
