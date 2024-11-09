@@ -102,7 +102,6 @@ class StudentController:
         elif choice == '2':
             if(qo_no == 0):
                 print("Going back to content block")
-                print(textBookID, chapterID, sectionID, blockIdx)
                 self.view_content_block(ebookIdx['textBookID'], ebookIdx['chapterID'], ebookIdx['sectionID'], blockIdx+1)
             else:
                 self.view_activity_rep(ebookIdx, textBookID, courseID, chapterID, sectionID, blockID, blockIdx, activity, activity_data, qo_no-1)
@@ -132,7 +131,6 @@ class StudentController:
 
     def view_content_block(self, textBookID, chapterID, sectionID, blockID):
         contentblock = None
-        print("sd", textBookID, chapterID, sectionID, blockID, type(textBookID), type(chapterID), type(sectionID), type(blockID))
         try:
             contentblock = self.ebooks[textBookID]['chapters'][chapterID]['sections'][sectionID]['contentblocks'][blockID]
             print(f"Content Blocks for Section {sectionID+1}:")
