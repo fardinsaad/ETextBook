@@ -97,7 +97,7 @@ class TAController:
                 else:
                     self.create_content_block()
             elif action == "modify":
-                isSucceed = self.book_model.modifyContentTransaction(self.ebook, "picture")
+                isSucceed = self.ta_model.modifyContentTransaction(self.ebook, "picture")
                 if isSucceed == 0:
                     self.landing_page()
                 else:
@@ -149,7 +149,7 @@ class TAController:
                 if action == "create":
                     isSucceed = self.ta_model.addActivtyTransaction(self.ebook)
                 elif action == "modify":
-                    isSucceed = self.book_model.modifyContentTransaction(self.ebook, "activity")
+                    isSucceed = self.ta_model.modifyContentTransaction(self.ebook, "activity")
                 if isSucceed == 0:
                     self.landing_page()
                 else:
@@ -295,7 +295,7 @@ class TAController:
                 if isSucceed == 1:
                     self.modify_section()
                 else:
-                    self.user_view.display_message("Invalid Conten Bolck ID!")
+                    self.user_view.display_message("Invalid Content Block ID!")
                     self.delete_content_block()
             else:
                 self.user_view.display_message("Invalid Content Block ID format")
@@ -458,7 +458,7 @@ class TAController:
         choice = self.user_view.get_text_input("Enter Choice (1-2): ")
         if choice == '1':
             if new_password != confirm_password:
-                self.user_view.display_message("new and confirm Passwords  do not match!")
+                self.user_view.display_message("New and Confirm Passwords do not match!")
                 self.change_password()
             else:
                 self.ta_model.update_password(self.user[0], new_password)

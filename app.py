@@ -48,8 +48,8 @@ class App:
             'OP4_EXP': 'EXP-4',
             'OP4_Label': 'Incorrect'
         }
-        self.ta_model.addContentTransaction(ebook)
-        self.book_model.addActivtyTransaction(ebook)
+        # self.ta_model.addContentTransaction(ebook)
+        # self.book_model.addActivtyTransaction(ebook)
         # self.book_model.modifyContentTransaction(ebook, "activity")
         course = {
             'courseID': 2,
@@ -71,7 +71,7 @@ class App:
         #     print("Chapters:", chapters)
 
     def run(self):
-        self.check()
+        #  self.check()
         while True:
             self.user_controller.user_view.display_menu()
             choice = self.user_controller.user_view.get_user_input("Enter choice (1-5): ")
