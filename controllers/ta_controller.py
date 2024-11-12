@@ -295,7 +295,6 @@ class TAController:
                 if isSucceed == 1:
                     self.modify_section()
                 else:
-                    self.user_view.display_message("Invalid Content Block ID!")
                     self.delete_content_block()
             else:
                 self.user_view.display_message("Invalid Content Block ID format")
@@ -319,7 +318,6 @@ class TAController:
                 if isSucceed == 1:
                     self.modify_section()
                 else:
-                    self.user_view.display_message("Content Block was not hidden!")
                     self.hide_content_block()
             else:
                 self.user_view.display_message("Invalid Content Block ID format")

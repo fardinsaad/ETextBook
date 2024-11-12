@@ -13,6 +13,11 @@ class FacultyModel:
         user = cursor.fetchone()
         return user
     
+    def getTAID(self, firstName, lastName, email):
+        query = "SELECT userID FROM User WHERE firstName = %s AND lastName = %s AND email = %s AND role = 'TA'"
+        cursor = self.db.execute_query(query, (firstName, lastName, email))
+        result = cursor.fetchone()
+        return result[0] if result else None
     # DONE
     def addTA_to_User(self, userID, firstName, lastName, email, password):
         

@@ -42,7 +42,6 @@ class FacultyController:
         pattern = r'^Q\d+$'
         return bool(re.match(pattern, questionID))
 
-
     def create_text(self, blockType, action):
         self.user_view.navbar_menu(self.user, "Add Text")
         content = self.user_view.get_text_input("Enter Text: ")
@@ -538,7 +537,6 @@ class FacultyController:
             self.user_view.display_message("Invalid Chapter ID format")
             self.create_chapter()     
                      
-    
     def create_TA(self):
         self.user_view.navbar_menu(self.user, "Add TA")
         firstName = self.user_view.get_text_input("A. Enter First Name: ")
@@ -555,12 +553,12 @@ class FacultyController:
         self.user_view.display_message("2. Cancel")
         choice = self.user_view.get_text_input("Enter choice(1-2): ")
         if choice == '1':
-            isSucceed = self.faculty_model.addTA_to_User(TAID, firstName, lastName, email, password)
-            taAdded = self.faculty_model.addTA_to_Course(self.ebook['uToken'], TAID, self.ebook['courseID'])
-            if isSucceed == 1:
-                self.user_view.display_message(f"TA {TAID} was added successfully!")
+            taId = self.faculty_model.getTAID(firstName, lastName, email)
+            if(taId is None):
+                self.faculty_model.addTA_to_User(TAID, firstName, lastName, email, password)
+                self.faculty_model.addTA_to_Course(self.ebook['uToken'], TAID, self.ebook['courseID'])
             else:
-                self.user_view.display_message(f"Error in adding TA {TAID}")
+                self.faculty_model.addTA_to_Course(self.ebook['uToken'], taId, self.ebook['courseID'])
             self.landing_page()
         elif choice == '2':
             self.landing_page()
@@ -776,7 +774,6 @@ class FacultyController:
             self.faculty_view.display_message("Invalid choice!")
             self.landing_page()
         
-
     def login(self):
         self.user_view.display_message("\n\nFaculty | Login")
         userID = self.user_view.get_text_input("A. Enter user ID: ")

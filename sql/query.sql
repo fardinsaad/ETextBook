@@ -1,0 +1,1 @@
+SELECT studentID, uToken, sum(score) from ETextBook.StudentActivity group by studentID ORDER BY sum(score) DESC LIMIT 1

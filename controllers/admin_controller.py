@@ -570,9 +570,9 @@ class AdminController:
         choice = self.admin_view.get_text_input("Enter Choice (1-2): ")
         if choice == '1':
             user = self.admin_model.get_user(userID, password)
-            self.ebook['userID'] = user[0]
-            self.admin = user
             if user:
+                self.ebook['userID'] = user[0]
+                self.admin = user
                 self.landing_page()
             else:
                 self.admin_view.display_message("Login incorrect.")
