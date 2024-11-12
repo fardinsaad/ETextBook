@@ -610,7 +610,7 @@ class FacultyController:
                 self.user_view.display_message(f"Error in enrolling student {studentID}")
             self.active_course()
         elif choice == '2':
-            self.user_view.display_message(f"Unsuccessful enrollment for student {studentID}")
+            self.user_view.display_message(f"Going back!")
             self.active_course()
         else:
             self.user_view.display_message("Invalid choice!")
