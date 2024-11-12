@@ -683,9 +683,9 @@ class FacultyController:
         self.user_view.navbar_menu(self.user, "Go to Evaluation Course")
         courseID = self.user_view.get_text_input("Enter course ID: ")
         self.ebook['courseID'] = courseID
-        validFaculty = self.faculty_model.is_faculty_in_course(self.user[0], courseID)
+        validFaculty = self.faculty_model.is_faculty_in_e_course(self.user[0], courseID)
         if not validFaculty:
-            self.user_view.display_message("You are not a Faculty in this course!")
+            self.user_view.display_message("You are either not a Faculty in this course or this is not a evaluation course!")
             self.evaluation_course()
             return
         textBookID = self.book_model.get_textbookID_by_courseID(courseID)

@@ -75,6 +75,22 @@ class FacultyModel:
         cursor = self.db.execute_query(query, (userID,))
         return cursor.fetchone()
     # DONE
+    def is_faculty_in_e_course(self, userID, courseID):
+        query = """
+            SELECT COUNT(*)
+            FROM ETextBook.Course c
+            WHERE c.userID = %s AND c.courseID = %s AND c.courseType = 'Evaluation'
+        """
+        try:
+            cursor = self.db.execute_query(query, (userID, courseID))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            result = cursor.fetchone()
+            return result[0] > 0
+        except Exception as e:
+            print(f"Failed to check if Faculty '{userID}' is in course '{courseID}': {e}")
+            return False
+    # DONE
     def is_faculty_in_course(self, userID, courseID):
         query = """
             SELECT COUNT(*)
@@ -260,6 +276,18 @@ class FacultyModel:
             print(f"Failed to create Text block '{blockID}' with '{type}': {e}")
             return 0    
     # DONE 
+    def add_content_user_activity(self, ebook):
+        blockID, sectionID, chapterID, textBookID, courseID, userID = ebook['contentblockID'], ebook['sectionID'], ebook['chapterID'], ebook['textBookID'], ebook['courseID'], ebook['userID']
+        query = "INSERT INTO content_user_activity (blockID, sectionID, chapterID, textBookID, courseID, userID) VALUES (%s, %s, %s, %s, %s, %s)"
+        try:
+            cursor = self.db.execute_query(query, (blockID, sectionID, chapterID, textBookID, courseID, userID))
+            if cursor is None:
+                raise Exception("Query Execution Failed!!!!")
+            print(f"Content User Activity '{blockID}' created successfully!")
+            return 1
+        except Exception as e:
+            print(f"Failed to create Content User Activity '{blockID}': {e}")
+            return 0
     def addContentTransaction(self, ebook):
         try:
             if not self.db.connection.in_transaction:
@@ -270,6 +298,7 @@ class FacultyModel:
                 self.addSection(ebook)
             if(self.getContentBlock(ebook) is None):
                 self.addContentBlock(ebook)
+                self.add_content_user_activity(ebook)
             else:
                 print("You can not add the content block as it already exists. You can modify it.")
             self.db.connection.commit()
@@ -610,8 +639,8 @@ class FacultyModel:
             cursor = self.db.execute_query(query, (chapterID, textBookID,))
             if cursor is None:
                 raise Exception("Query Execution Failed!!!!")
-            result = cursor.fetchone()
-            return result
+            result = cursor.fetchall()
+            return result[0]
         except Exception as e:
             print(f"Failed to get section for chapter '{chapterID}': {e}")
             return None
@@ -620,7 +649,6 @@ class FacultyModel:
         chapterID = ebook['chapterID']
         textBookID = ebook['textBookID']
         sectionID = ebook['sectionID']
-    
         query = """
             SELECT blockID
             FROM ETextBook.ContentBlock
@@ -630,8 +658,8 @@ class FacultyModel:
             cursor = self.db.execute_query(query, (sectionID, chapterID, textBookID))
             if cursor is None:
                 raise Exception("Query Execution Failed!!!!")
-            result = cursor.fetchone()
-            return result
+            result = cursor.fetchall()
+            return result[0]
         except Exception as e:
             print(f"Failed to get block for chapter '{chapterID}': {e}")
             return None

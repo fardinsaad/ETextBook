@@ -94,20 +94,25 @@ class StudentController:
         except IndexError:
             print('\033[31mNo questions found!\033[0m')
             self.view_content_block(ebookIdx['textBookID'], ebookIdx['chapterID'], ebookIdx['sectionID'], blockIdx+1)
+            return
         self.user_view.display_message("1. Next/Submit")
         self.user_view.display_message("2. Go back")
         choice = self.user_view.get_text_input("Enter Choice (1-2): ")
         if choice == '1':
             self.view_activity_rep(ebookIdx, textBookID, courseID, chapterID, sectionID, blockID, blockIdx, activity, activity_data, qo_no+1)
+            return
         elif choice == '2':
             if(qo_no == 0):
                 print("Going back to content block")
                 self.view_content_block(ebookIdx['textBookID'], ebookIdx['chapterID'], ebookIdx['sectionID'], blockIdx+1)
+                return
             else:
                 self.view_activity_rep(ebookIdx, textBookID, courseID, chapterID, sectionID, blockID, blockIdx, activity, activity_data, qo_no-1)
+                return
         else:
             self.user_view.display_message("Invalid choice!")
             self.view_activity_rep(ebookIdx, textBookID, courseID, chapterID, sectionID, blockID, blockIdx, activity, activity_data, qo_no)
+            return
             
         
 
@@ -138,19 +143,27 @@ class StudentController:
             print(f"Block {blockID+1}: {blockType}")
             if(blockType == 'activity'):
                 self.view_activity(textBookID, chapterID, sectionID, blockID, content)
+                return
             else:
                 print(content)
         except IndexError:
             print('\033[31mNo content blocks found!\033[0m')
             self.landing_page()
+            return
         if not contentblock:
             print('\033[31mNo content blocks found!\033[0m')
             self.landing_page()
-        self.user_view.display_message("1. Next/Submit")
+            return
+        self.user_view.display_message("1. Next/Submit----------------------")
         self.user_view.display_message("2. Go back")
         choice = self.user_view.get_text_input("Enter Choice (1-2): ")
         if choice == '1':
             self.view_content_block(textBookID, chapterID, sectionID,blockID=blockID+1)
+        elif choice == '2':
+            if(blockID == 0):
+                self.view_section()
+            else:
+                self.view_content_block(textBookID, chapterID, sectionID,blockID=blockID-1)
         else:
             self.user_view.display_message("Invalid choice!")
             self.view_content_block(textBookID, chapterID, sectionID, blockID)
@@ -247,7 +260,6 @@ class StudentController:
             self.user = user
             if user:
                 self.userID = user[0]
-                print(self.userID, "UserID----------------", type(self.userID))
                 self.landing_page()
             else:
                 self.user_view.display_message("Login incorrect.")
@@ -266,7 +278,8 @@ class StudentController:
         elif choice == '2':
             self.signIn()
         elif choice == '3':
-            pass
+            print("Thank you! Hope to see you again!")
+            return
         else:
             self.user_view.display_message("Invalid choice!")
 
